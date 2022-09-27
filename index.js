@@ -2,6 +2,10 @@ const express = require('express') ;
 const mongoose = require('mongoose') ;
 const httpError = require('http-errors') ;
 const path = require('path') ;
+
+
+const cors = require('cors');
+
 const connection = require('./connection.js')
 
 const userRouter = require('./routes/user');
@@ -22,6 +26,10 @@ db.once("open", function () {
 
 var app = express() ;
 const port = 5000 ;
+
+/* middleware */
+app.use(cors());
+app.use(express.json());
 
 /* main routes */
 app.use('/', indexRouter);
