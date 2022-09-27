@@ -10,7 +10,7 @@ const indexRouter = require('./routes/index');
 const testRouter = require('./routes/testAPI');
 
 
-
+/* connect to database */
 const connector = new connection() ;
 mongoose.connect (connector.getURL())
 const db = mongoose.connection;
@@ -23,6 +23,7 @@ db.once("open", function () {
 var app = express() ;
 const port = 5000 ;
 
+/* main routes */
 app.use('/', indexRouter);
 app.use('/users', userRouter);
 app.use('/testAPI', testRouter) ;
