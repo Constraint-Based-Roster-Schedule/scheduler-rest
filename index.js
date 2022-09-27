@@ -2,12 +2,22 @@ const express = require('express') ;
 const mongoose = require('mongoose') ;
 const httpError = require('http-errors') ;
 const path = require('path') ;
+const connection = require('./connection.js')
 
 const userRouter = require('./routes/user');
 const wardRouter = require('./routes/ward');
 const indexRouter = require('./routes/index');
 const testRouter = require('./routes/testAPI');
 
+
+
+const connector = new connection() ;
+mongoose.connect (connector.getURL())
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function () {
+  console.log("Connected successfully");
+});
 
 
 var app = express() ;
