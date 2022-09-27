@@ -1,0 +1,33 @@
+{
+  "name": "scheduler-rest",
+  "version": "1.0.0",
+  "description": "Provides REST backend to the roster scheduling system and interfaces with DB and the microservice. ",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Constraint-Based-Roster-Schedule/scheduler-rest.git"
+  },
+  "keywords": [
+    "node.js",
+    "backend",
+    "mongoDB",
+    "express"
+  ],
+  "author": "TechNest",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Constraint-Based-Roster-Schedule/scheduler-rest/issues"
+  },
+  "homepage": "https://github.com/Constraint-Based-Roster-Schedule/scheduler-rest#readme",
+  "dependencies": {
+    "debug": "^4.3.4",
+    "express": "^4.18.1",
+    "http-errors": "^2.0.0",
+    "mongoose": "^6.6.2",
+    "pug": "^3.0.2"
+  }
+}
