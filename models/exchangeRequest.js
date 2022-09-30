@@ -25,4 +25,4 @@ const exchangeRequestSchema = new mongoose.Schema({
 
 const exchangeRequest = mongoose.model("exchangeRequest", exchangeRequestSchema);
 
-module.exports = User;
+module.exports = exchangeRequest;
