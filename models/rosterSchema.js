@@ -9,6 +9,9 @@ const rosterSchema = new mongoose.Schema({
     month : {
         type : String, 
         required : true
+    },
+    days : {
+        type : Array,
+        default : []
     }
-    
 });
