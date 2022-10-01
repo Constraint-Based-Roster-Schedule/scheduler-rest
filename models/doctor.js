@@ -15,8 +15,9 @@ const doctorSchema=new mongoose.Schema({
         required:true,
         unique:true
     },
-    wardNumber:{
-        type:Number,
+    wardID:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Ward" ,
         required:true
     },
     address:{
@@ -24,7 +25,7 @@ const doctorSchema=new mongoose.Schema({
         required:true,
     },
     emailaddress:{
-        type:email,
+        type: String,
         required:true,
         unique:true
     },

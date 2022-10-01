@@ -16,7 +16,8 @@ const consultantSchema=new mongoose.Schema({
         unique:true
     },
     wardNumber:{
-        type:Number,
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Ward" ,
         required:true
     },
     address:{
@@ -24,7 +25,7 @@ const consultantSchema=new mongoose.Schema({
         required:true,
     },
     emailaddress:{
-        type:email,
+        type:String,
         required:true,
         unique:true
     },
