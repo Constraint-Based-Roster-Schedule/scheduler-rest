@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 
 const exchangeRequestSchema = new mongoose.Schema({
   fromID: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User' ,
     required: true,
   },
   toID: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User',
     required: true
   },
   currentDate: {
