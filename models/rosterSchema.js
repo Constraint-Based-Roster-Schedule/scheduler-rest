@@ -15,3 +15,5 @@ const rosterSchema = new mongoose.Schema({
         default : []
     }
 });
+
+module.exports = mongoose.model("Roster", rosterSchema) ;
