@@ -23,8 +23,8 @@ const doctorSchema=new mongoose.Schema({
         type: String,
         required:true,
     },
-    emailaddress:{
-        type:email,
+    emailAddress:{
+        type:String,
         required:true,
         unique:true
     },
@@ -37,5 +37,5 @@ const doctorSchema=new mongoose.Schema({
         required:true
     }
 });
-
-module.exports=mongoose.model('Doctor',doctorSchema);
+ 
+exports.Doctor=mongoose.model('Doctor',doctorSchema);
