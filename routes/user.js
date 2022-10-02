@@ -7,9 +7,12 @@ router.get("/", function(req, res, next) {
   res.send("This is user route");
 });
 
-
-router.post("/add_user", userController.addUser) ;
+//FIXME: uncomment the controllers after implementation
+/*
+router.post("/add_user", userController.addUser) ; 
 router.get("/get_user", userController.getUser) ;
+*/ 
+
 
 
 
