@@ -8,7 +8,7 @@ const login = async (req,res)=>{
     const emailAddress=req.body.emailAddress;
     const password=req.body.password;
     const type=req.body.type;
-    console.log(password);
+    console.log(password); //TODO: remove this
     let user=null;
     
     switch(type){
