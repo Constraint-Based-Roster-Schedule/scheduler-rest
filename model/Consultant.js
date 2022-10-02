@@ -24,7 +24,7 @@ const consultantSchema=new mongoose.Schema({
         required:true,
     },
     emailaddress:{
-        type:email,
+        type:String,
         required:true,
         unique:true
     },

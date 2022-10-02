@@ -36,6 +36,7 @@ const doctorSchema=new mongoose.Schema({
         type:String,
         required:true
     }
-});
+}, {collection : "doctors"});
  
-exports.Doctor=mongoose.model('Doctor',doctorSchema);
+const doctorModel = mongoose.model('Doctor',doctorSchema);
+module.exports = doctorModel

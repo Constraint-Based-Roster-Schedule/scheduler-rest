@@ -2,7 +2,7 @@ const { json } = require("express");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const adminAuthToken = async (req, res, next) => {
+const doctorAuthToken = async (req, res, next) => {
   //take the token from the header
 
   const token = req.header("x-auth-token");
@@ -22,7 +22,7 @@ const adminAuthToken = async (req, res, next) => {
       //verify using secret key
       const user = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-      if (user.userType != "3") {
+      if (user.userType != "2") {
         return res(403).json({
           errors: [
             {
@@ -43,4 +43,4 @@ const adminAuthToken = async (req, res, next) => {
     }
   }
 };
-module.exports = adminAuthToken;
+module.exports = doctorAuthToken;

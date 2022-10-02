@@ -1,17 +1,17 @@
-const Doctor = require("../model/Doctor");
+const {Admin}= require("../model/Admin");
 const express = require("express");
 
 const mongoose = require("mongoose");
 
 
 const getUser = async (req, res) => {
-  const doctorList = await Doctor.find();
-  if (!doctorList) {
+  const adminList = await Admin.find();
+  if (!adminList) {
     res.status(500).json({
       success: false,
     });
   }
-  res.send(doctorList);
+  res.send(adminList);
 };
 module.exports = {
   getUser,

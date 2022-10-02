@@ -40,8 +40,8 @@ const login = async (req,res)=>{
             }
            
         }
-        case 2:{
-            user=await Doctor.findOne({emailAddress:emailAddress})
+        case '2':{
+            user=await Consultant.findOne({emailAddress:emailAddress})
             if(!user){
                 return res.status(201).json({success:false , msg:"unsuccessful."})
             }
@@ -63,7 +63,7 @@ const login = async (req,res)=>{
             }
            
         }
-        case 3:{
+        case '3':{
             user=await Admin.findOne({emailAddress:emailAddress})
 
             if(!user){
