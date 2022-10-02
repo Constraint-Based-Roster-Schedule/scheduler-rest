@@ -11,15 +11,25 @@ const wardSchema = new mongoose.Schema({
     }, 
     consultantID : {
         type : mongoose.Schema.Types.ObjectId, 
-        ref : 'User', 
+        ref : 'Consultant', 
         required : true
     }, 
     doctorList : [
         {
             type : mongoose.Schema.Types.ObjectId,
-            ref : "User", 
+            ref : "Doctor", 
             required : false 
         
+        }
+    ],
+    shiftsPerDay : {
+        type : Number,
+        required : true
+    },
+    shiftNames : [
+        {
+            type : String,
+            required : true
         }
     ]
     
