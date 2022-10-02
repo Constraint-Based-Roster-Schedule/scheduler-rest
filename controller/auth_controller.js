@@ -1,7 +1,7 @@
 
 const mongoose = require("mongoose");
 const express = require('express');
-const Doctor = require("../model/Doctor");
+const Doctor = require("../models/Doctor");
 const JWT = require('jsonwebtoken')
 
 const login = async (req,res)=>{

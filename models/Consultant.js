@@ -40,6 +40,6 @@ const consultantSchema=new mongoose.Schema({
         type:String,
         required:true
     }
-});
+}, {collection : "consultant"});
 
 module.exports=mongoose.model('Consultant',consultantrSchema);
