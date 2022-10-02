@@ -1,11 +1,17 @@
 var express = require('express');
-var userController = require('../controllers/userController')
+
+const doctorAuthToken = require('../middleware/doctorAuthToken');
+const doctorRouter = require("./userDoctorRouter")
+const consultantRouter = require ("./userConsultantRouter")
+const admniRouter = require ("./userAdminRouter") 
+
 var router = express.Router();
 
 /* GET users listing. */
 router.get("/", function(req, res, next) {
   res.send("This is user route");
 });
+router.use("/doctor",doctorAuthToken, doctorRouter)
 
 //FIXME: uncomment the controllers after implementation
 /*
