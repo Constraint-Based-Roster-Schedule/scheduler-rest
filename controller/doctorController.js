@@ -54,6 +54,53 @@ const submitPreferrableSlots=(req,res)=>{
   return res.send(req.body);
 }
 
+const getIndividualRoster=(req,res)=>{
+  const myShifts={
+        "1":[0,1,0],
+        "2":[1,0,0],
+        "3":[0,1,1],
+        "4":[1,1,0],
+        "5":[1,0,1],
+        "6":[1,1,0],
+        "7":[0,1,0],
+        "8":[0,1,1],
+        "9":[1,1,0],
+        "10":[0,1,1],
+        "11":[1,0,0],
+        "12":[1,1,0],
+        "13":[0,1,1],
+        "14":[0,1,0],
+        "15":[1,0,1],
+        "16":[1,1,0],
+        "17":[0,1,1],
+        "18":[1,0,0],
+        "19":[1,1,0],
+        "20":[1,0,1],
+        "21":[0,1,1],
+        "22":[0,1,1],
+        "23":[0,0,0],
+        "24":[0,1,0],
+        "25":[1,0,0],
+        "26":[0,1,1],
+        "27":[1,0,1],
+        "28":[0,1,1],
+        "29":[0,1,1],
+        "30":[0,1,0],
+        "31":[1,0,1],
+    };
+    
+  return res.status(200).json({"myShifts":myShifts});
+}
+
+const getShiftNames=(req,res)=>{
+  const shiftNames={
+    '1':"Morning Shift",
+    "2":"Evening Shift",
+    "3":"Night Shift",
+  }
+  return res.status(200).json({"shiftNames":shiftNames});
+}
+
 module.exports = {
-  getUser,getData,submitShiftExchange,submitLeaveRequest,submitPreferrableSlots
+  getUser,getData,submitShiftExchange,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames
 };

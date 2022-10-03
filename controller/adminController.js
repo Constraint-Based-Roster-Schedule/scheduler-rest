@@ -1,5 +1,6 @@
 const {Admin}= require("../models/admin");
 const express = require("express");
+const app=express();
 
 const mongoose = require("mongoose");
 
