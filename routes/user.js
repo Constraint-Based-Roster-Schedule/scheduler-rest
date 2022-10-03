@@ -1,8 +1,10 @@
 var express = require('express');
+
 const doctorAuthToken = require('../middleware/doctorAuthToken');
 const doctorRouter = require("./userDoctorRouter")
 const consultantRouter = require ("./userConsultantRouter")
 const admniRouter = require ("./userAdminRouter") 
+
 var router = express.Router();
 
 /* GET users listing. */
@@ -11,4 +13,13 @@ router.get("/", function(req, res, next) {
 });
 router.use("/doctor",doctorAuthToken, doctorRouter)
 
-module.exports = router;
+//FIXME: uncomment the controllers after implementation
+/*
+router.post("/add_user", userController.addUser) ; 
+router.get("/get_user", userController.getUser) ;
+*/ 
+
+
+
+
+module.exports = router ;
