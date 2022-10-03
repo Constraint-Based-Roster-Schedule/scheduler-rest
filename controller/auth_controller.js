@@ -92,6 +92,17 @@ const login = async (req,res)=>{
 }
 }
 
+const logout = (req, res) => {
+    const token = JWT.sign ({ msg: "Signed out"},process.env.ACCESS_TOKEN_SECRET,
+    {
+        expiresIn : "1"
+    }
+    )
+    return res.status(200).send({success: true, token: token, msg: "Logged out"})
 
-module.exports = {login}
+}
+
+
+
+module.exports = {login, logout}
 
