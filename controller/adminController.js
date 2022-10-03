@@ -13,6 +13,14 @@ const getUser = async (req, res) => {
   }
   res.send(adminList);
 };
+
+const addUser = async (req,res)=>{
+    console.log("hiiiiiiiiiiiiiii");
+    console.log(req.body);
+    return res.send(req.body);
+}
+
+
 module.exports = {
-  getUser,
+  getUser,addUser
 };
