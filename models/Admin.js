@@ -34,6 +34,6 @@ const adminSchema=new mongoose.Schema({
         required:true
     },
    
-}, {collection : "admins"});
+});
 
-module.exports=mongoose.model('Admin',adminSchema);
+module.exports=mongoose.model('Consultant',adminSchema);

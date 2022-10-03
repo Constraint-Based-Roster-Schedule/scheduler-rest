@@ -15,16 +15,17 @@ const doctorSchema=new mongoose.Schema({
         required:true,
         unique:true
     },
-    wardNumber:{
-        type:Number,
+    wardID:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Ward" ,
         required:true
     },
     address:{
         type: String,
         required:true,
     },
-    emailAddress:{
-        type:String,
+    emailaddress:{
+        type: String,
         required:true,
         unique:true
     },
@@ -36,7 +37,6 @@ const doctorSchema=new mongoose.Schema({
         type:String,
         required:true
     }
-}, {collection : "doctors"});
- 
-const doctorModel = mongoose.model('Doctor',doctorSchema);
-module.exports = doctorModel
+});
+
+module.exports=mongoose.model('Doctor',doctorSchema);
