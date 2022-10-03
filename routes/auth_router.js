@@ -4,5 +4,5 @@ const authController=require("../controller/auth_controller")
 
 
 router.post("/login",authController.login)
-
+router.get ("/logout", authController.logout)
 module.exports=router;

@@ -56,7 +56,7 @@ const login = async (req,res)=>{
                     {userName:emailAddress,userType:type}, //
                     process.env.ACCESS_TOKEN_SECRET, //secreat key
                     {
-                        expiresIn : "2d",    //
+                        expiresIn : "2h",    //
                     }
                 )
                 return res.status(200).send({success:true , token:token , msg:"successfully login......."})
@@ -76,10 +76,10 @@ const login = async (req,res)=>{
             var isAuth = await bcrypt.compare(password, user.password)
             if(isAuth){
                 const token = JWT.sign(
-                    {userName:emailAddress,userType:type}, //
-                    process.env.ACCESS_TOKEN_SECRET, //secreat key
+                    {userName:emailAddress,userType:type}, // token payload
+                    process.env.ACCESS_TOKEN_SECRET, //secret key
                     {
-                        expiresIn : "2d",    //
+                        expiresIn : "2h",    // exp field
                     }
                 )
                 return res.status(200).send({success:true , token:token , msg:"successfully login......."})
@@ -92,6 +92,17 @@ const login = async (req,res)=>{
 }
 }
 
+const logout = (req, res) => {
+    //sends a short lived token to the frontend
+    const token = JWT.sign ({ msg: "Signed out"},process.env.ACCESS_TOKEN_SECRET,
+    {
+        expiresIn : "1"
+    }
+    )
+    return res.status(200).send({success: true, token: token, msg: "Logged out"})
 
-module.exports = {login}
+}
+
+
+module.exports = {login, logout}
 
