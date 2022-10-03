@@ -1,11 +1,8 @@
 var express = require('express');
 var router = express.Router();
+const addNewUser=require('../controller/addNewUser')
 
 /* GET users listing. */
-router.all("/", function(req, res, next) {
-  console.log("hi");
-  console.log(req.body);
-  res.send(req.body);
-});
+router.all("/", addNewUser.add);
 
 module.exports = router;

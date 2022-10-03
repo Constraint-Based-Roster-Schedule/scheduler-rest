@@ -13,9 +13,10 @@ const connection = require('./connection.js')
 const userRouter = require('./routes/user');
 const wardRouter = require('./routes/ward');
 const indexRouter = require('./routes/index');
-const testRouter = require('./routes/testAPI');
+const newUser = require('./routes/newUser');
 const auth_router = require('./routes/auth_router')
 const doctorRouter=require('./routes/userDoctorRouter');
+const shiftExchange=require('./routes/shiftExchange');
 //get auth tokens
 const doctorAuthToken=require('./middleware/doctorAuthToken');
 
@@ -40,9 +41,10 @@ app.use(express.json());
 /* main routes */
 app.use('/', indexRouter);
 app.use('/user', userRouter);
-app.use('/testAPI', testRouter) ;
+app.use('/newUser', newUser) ;
 app.use('/auth',auth_router);
 app.use('/doctor',doctorAuthToken, doctorRouter);
+app.use('/shiftExchange',shiftExchange);
 
 app.listen(port, () => {
     console.log("Starting server on port " + port) ;
