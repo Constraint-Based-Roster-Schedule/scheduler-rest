@@ -44,6 +44,16 @@ const submitShiftExchange=(req,res)=>{
     return res.send(req.body);
 }
 
+const submitLeaveRequest=(req,res)=>{
+  console.log(req.body);
+  return res.send(req.body);
+}
+
+const submitPreferrableSlots=(req,res)=>{
+  console.log(req.body);
+  return res.send(req.body);
+}
+
 module.exports = {
-  getUser,getData,submitShiftExchange
+  getUser,getData,submitShiftExchange,submitLeaveRequest,submitPreferrableSlots
 };
