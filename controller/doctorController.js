@@ -45,8 +45,13 @@ const submitShiftExchange=(req,res)=>{
 }
 
 const submitLeaveRequest=(req,res)=>{
-  console.log(req.body);
-  return res.send(req.body);
+  if(!req.body){
+    return res.status(201).json({success:false,msg:"can't have an empty body"})
+  }else{
+    console.log(req.body);
+    return res.send(req.body);
+  }
+  
 }
 
 const submitPreferrableSlots=(req,res)=>{
