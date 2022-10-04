@@ -16,7 +16,19 @@ const getUser = async (req, res) => {
 
 const getInNotif = async (req, res) => {
   
-
+  var recievedByID = req.userID ;
+  console.log(recievedByID);
+  try {
+    var docs = await exchangeRequestModel.find({toID : recievedByID}) ;
+  docs.forEach(element => {
+    console.log(element);
+    
+  });
+  return res.status(200).json(docs)   
+  } catch (error) {
+    return console.error(error)
+  }
+  
 
 }
 const putNotif = async (req, res, next) => {
