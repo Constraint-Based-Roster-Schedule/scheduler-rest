@@ -19,16 +19,12 @@ const advanceRequestSchema = new mongoose.Schema({
         day : Number,
         shiftNum : Number
     },
-    shiftsPerDay : {
+    shiftDay : {
         type : Number,
         required : true
-    },
-    shiftNames : [
-        {
-            type : String,
-            required : true
-        }
-    ]
+    }
+    
+    
     
 }, {collection : "advanceRequests"});
 
