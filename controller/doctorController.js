@@ -1,6 +1,6 @@
 const Doctor = require("../models/doctor");
 const express = require("express");
-
+const exchangeRequestModel = require("../models/exchangeRequest")
 const mongoose = require("mongoose");
 
 
@@ -14,6 +14,43 @@ const getUser = async (req, res) => {
   res.send(doctorList);
 };
 
+
+const getInNotif = async (req, res) => {
+  
+
+
+}
+const putNotif = async (req, res, next) => {
+  if (!req.body) {
+    return res.status(201).json({success: false, msg: "can't have empty body"}) ;
+  } else {
+    var request1 = new exchangeRequestModel(req.body) ;
+    request1.save(function (err, request1) {
+      if (err) return console.error(err);
+      console.log(request1._id + " saved to exchangeRequests collection.");
+      return res.status(200).json({success: true, msg: "added successfully"}) ;
+    });
+
+    
+  }
+   ;
+
+}
+const getOutNotif = async(req,res) => {
+
+}
+const hideNotif = async (req,res) => {
+
+}
+const declineRequest = async (req,res) => {
+
+}
+const acceptRequest = async (req,res) => {
+
+}
+module.exports = {
+  getUser, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest
+=======
 
 const getData=(req,res)=>{
     const wardDoctors=[[1,'Thinira Wanasingha'],[2,'Sakuni Bandara'], [3,'Gamunu Bandara'], [4,'Harshani Bandara']];
@@ -38,11 +75,6 @@ const getData=(req,res)=>{
     return res.status(200).json({"wardDoctors":wardDoctors,"myShifts":myShifts});
 }
 
-const submitShiftExchange=(req,res)=>{
-    
-    console.log(req.body);
-    return res.send(req.body);
-}
 
 const submitLeaveRequest=(req,res)=>{
   if(!req.body){
@@ -107,5 +139,5 @@ const getShiftNames=(req,res)=>{
 }
 
 module.exports = {
-  getUser,getData,submitShiftExchange,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames
+  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest
 };

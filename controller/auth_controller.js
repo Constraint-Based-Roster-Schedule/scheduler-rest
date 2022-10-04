@@ -16,7 +16,7 @@ const login = async (req, res) => {
   switch (type) {
     case "1": {
       console.log("inside case1");
-      user = await Doctor.findOne({ emailAddress: emailAddress });
+      user = await Doctor.findOne({ emailaddress: emailAddress });
       if (!user) {
         console.log(emailAddress);
         return res.status(201).json({ success: false, msg: "unsuccessful." });
