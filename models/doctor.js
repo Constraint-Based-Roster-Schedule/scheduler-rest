@@ -37,6 +37,6 @@ const doctorSchema=new mongoose.Schema({
         type:String,
         required:true
     }
-});
+},{collection : "doctors"});
 
 module.exports=mongoose.model('Doctor',doctorSchema);

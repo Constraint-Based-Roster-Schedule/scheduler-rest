@@ -15,7 +15,7 @@ const consultantSchema=new mongoose.Schema({
         required:true,
         unique:true
     },
-    wardNumber:{
+    wardID:{
         type:mongoose.Schema.Types.ObjectId,
         ref : "Ward" ,
         required:true
@@ -41,6 +41,6 @@ const consultantSchema=new mongoose.Schema({
         type:String,
         required:true
     }
-});
+}, {collection : "consultants"});
 
-module.exports=mongoose.model('Consultant',consultantrSchema);
+module.exports=mongoose.model('Consultant',consultantSchema);

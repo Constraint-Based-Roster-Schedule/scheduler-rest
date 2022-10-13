@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const express = require("express");
-const Doctor = require("../models/Doctor");
-const Consultant = require("../models/Consultant");
-const Admin = require("../models/Admin");
+const Doctor = require("../models/doctor");
+const Consultant = require("../models/consultant");
+const Admin = require("../models/admin");
 const JWT = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const login = async (req, res) => {
   const emailAddress = req.body.emailAddress;
@@ -17,12 +18,14 @@ const login = async (req, res) => {
       console.log("inside case1");
       user = await Doctor.findOne({ emailAddress: emailAddress });
       if (!user) {
+        console.log(emailAddress);
         return res.status(201).json({ success: false, msg: "unsuccessful." });
       }
+      
 
       //TODO: password hashing
-
-      if (password == user.password) {
+      var isAuth = await bcrypt.compare(password, user.password);
+      if (isAuth) {
         //create token
         const token = JWT.sign(
           { userName: emailAddress, userType: type }, //attributes that we want to get in frontend
@@ -46,15 +49,15 @@ const login = async (req, res) => {
       }
     }
     case "2": {
-      console.log("inside type 2");
-      user = await Consultant.findOne({ emailAddress: emailAddress });
+      user = await Consultant.findOne({ emailaddress: emailAddress });
       if (!user) {
         return res.status(201).json({ success: false, msg: "unsuccessful." });
       }
 
       //TODO: password hashing
-
-      if (password == Consultant.password) {
+      var isAuth = await bcrypt.compare(password, user.password);
+      //console.log(isAuth);
+      if (isAuth) {
         const token = JWT.sign(
           { userName: emailAddress, userType: type }, //
           process.env.ACCESS_TOKEN_SECRET, //secreat key
@@ -76,20 +79,22 @@ const login = async (req, res) => {
       }
     }
     case "3": {
-        console.log("inside type 2");
-      user = await Admin.findOne({ emailAddress: emailAddress });
+      console.log("inside case3");
+      user = await Admin.findOne({ emailaddress: emailAddress });
 
       if (!user) {
         return res.status(201).json({ success: false, msg: "unsuccessful." });
       }
       //TODO: password hashing
-
-      if (password == user.password) {
+    //   console.log(user);
+    //   console.log(user.userName);
+      var isAuth = await bcrypt.compare(password, user.password);
+      if (isAuth) {
         const token = JWT.sign(
-          { userName: emailAddress, userType: type }, //
-          process.env.ACCESS_TOKEN_SECRET, //secreat key
+          { userName: emailAddress, userType: type }, // token payload
+          process.env.ACCESS_TOKEN_SECRET, //secret key
           {
-            expiresIn: "2h", //
+            expiresIn: "2h", // exp field
           }
         );
         return res
@@ -108,4 +113,18 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+const logout = (req, res) => {
+  //sends a short lived token to the frontend
+  const token = JWT.sign(
+    { msg: "Signed out" },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: "1",
+    }
+  );
+  return res
+    .status(200)
+    .send({ success: true, token: token, msg: "Logged out" });
+};
+
+module.exports = { login, logout };

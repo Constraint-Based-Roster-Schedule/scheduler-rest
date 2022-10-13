@@ -6,13 +6,13 @@ const wardSchema = new mongoose.Schema({
         required: true
     },
     wardName : {
-        type : Number, 
+        type : String, 
         required : true
     }, 
     consultantID : {
         type : mongoose.Schema.Types.ObjectId, 
         ref : 'Consultant', 
-        required : true
+        required : false
     }, 
     doctorList : [
         {
@@ -33,6 +33,6 @@ const wardSchema = new mongoose.Schema({
         }
     ]
     
-});
+}, {collection : "wards"});
 
 module.exports = mongoose.model ("Ward", wardSchema)
