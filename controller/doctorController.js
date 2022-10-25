@@ -60,9 +60,8 @@ const declineRequest = async (req,res) => {
 const acceptRequest = async (req,res) => {
 
 }
-module.exports = {
-  getUser, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest
-=======
+
+
 
 const getData=(req,res)=>{
     const wardDoctors=[[1,'Thinira Wanasingha'],[2,'Sakuni Bandara'], [3,'Gamunu Bandara'], [4,'Harshani Bandara']];

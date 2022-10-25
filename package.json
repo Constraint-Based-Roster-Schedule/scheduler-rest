@@ -4,7 +4,7 @@
   "description": "Provides REST backend to the roster scheduling system and interfaces with DB and the microservice. ",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon index.js --trace-warnings ...",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
