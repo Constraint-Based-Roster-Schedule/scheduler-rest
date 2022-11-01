@@ -18,6 +18,7 @@ const getUser = async (req, res) => {
 const getInNotif = async (req, res) => {
   
   var recievedByID = req.userID ;
+
   console.log(recievedByID);
   try {
     var docs = await exchangeRequestModel.find({toID : recievedByID}) ;

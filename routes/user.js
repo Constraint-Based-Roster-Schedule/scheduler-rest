@@ -5,7 +5,7 @@ const adminAuthToken=require('../middleware/adminAuthToken')
 const doctorRouter = require("./userDoctorRouter")
 const consultantRouter = require ("./userConsultantRouter")
 const admniRouter = require ("./userAdminRouter"); 
-const { route } = require('..');
+
 
 var router = express.Router();
 
@@ -13,7 +13,7 @@ var router = express.Router();
 router.get("/", function(req, res, next) {
   res.send("This is user route");
 });
-router.use("/doctor", doctorRouter)
+router.use("/doctor",doctorAuthToken, doctorRouter)
 router.use("/admin",admniRouter)
 //FIXME: uncomment the controllers after implementation
 /*
