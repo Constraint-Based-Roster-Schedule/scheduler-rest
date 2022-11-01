@@ -12,17 +12,27 @@ const exchangeRequestSchema = new mongoose.Schema({
     required: true
   },
   currentDate: {
+    type: String, 
+    required: true
+  },
+  currentShift: {
     type: Number, 
     required: true
   },
   requestedDate: {
-    type: Number, 
+    type: String, 
     required: true
+  },
+  requestedShift : {
+    type : Number, 
+    required : true
   },
   requestState: {
     type: Number,
     required: true
   }
+}, {
+  collection : "exchangeRequests"
 });
 
 const exchangeRequest = mongoose.model("exchangeRequest", exchangeRequestSchema);
