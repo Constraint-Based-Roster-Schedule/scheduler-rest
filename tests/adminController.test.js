@@ -21,8 +21,17 @@ const doctorBody = {
 } ;
 
 
-const consultantBody = { 
-
+const consultantBody = {
+    firstName: "first", 
+    lastName: "second", 
+    userName: "username", 
+    wardID : "ward_id" ,
+    address: "address", 
+    emailaddress : "gmail@gmail.com", 
+    telephone : "000" ,
+    password : "password",
+    specialty : "cardio",  
+    type : "2"
 }
 
 
@@ -35,6 +44,7 @@ const reqMocker = (body) => {
 
 
 const mockedReqDoc = reqMocker(doctorBody); 
+const mockedReqCon = reqMocker(consultantBody)
 const mockedReqNone = reqMocker() ;
 const mockedReqEmpty = reqMocker({}) ;
 
@@ -43,8 +53,12 @@ Doctor.prototype.save = jest.fn().mockImplementation(() => {
     res.status(200).json({success:true}) ;
 }) ;
 
+Consultant.prototype.save = jest.fn().mockImplementation(() => {
+    res.status(200).json({success:true}) ;
+}) ;
+
 describe('tests add user function with both types of users', () => {
-    describe('testing with doctor', () => {
+    describe('testing with doctor and consultant', () => {
         beforeEach(() => {
             clearMockRes()
         });
@@ -91,6 +105,16 @@ describe('tests add user function with both types of users', () => {
 
     describe('testing with consultant', () => {
         
+        test('should pass with res.status 200', async () => {
+            await addUser(mockedReqCon,res) ;
+            expect(res.status).toBeCalled() ;
+            expect(res.status).toBeCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    success: true,
+                  }),
+            );
+        });
     });
 });
 
