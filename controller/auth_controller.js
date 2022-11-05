@@ -28,7 +28,7 @@ const login = async (req, res) => {
       if (isAuth) {
         //create token
         const token = JWT.sign(
-          { userName: emailAddress, userType: type }, //attributes that we want to get in frontend
+          { userName: emailAddress, userType: type, userID: user._id}, //attributes that we want to get in frontend
           process.env.ACCESS_TOKEN_SECRET, //secreat key
           {
             expiresIn: "2h", //
@@ -59,7 +59,7 @@ const login = async (req, res) => {
       //console.log(isAuth);
       if (isAuth) {
         const token = JWT.sign(
-          { userName: emailAddress, userType: type }, //
+          { userName: emailAddress, userType: type, userID: user._id }, //
           process.env.ACCESS_TOKEN_SECRET, //secreat key
           {
             expiresIn: "2h", //
@@ -91,7 +91,7 @@ const login = async (req, res) => {
       var isAuth = await bcrypt.compare(password, user.password);
       if (isAuth) {
         const token = JWT.sign(
-          { userName: emailAddress, userType: type }, // token payload
+          { userName: emailAddress, userType: type, userID: user._id }, // token payload
           process.env.ACCESS_TOKEN_SECRET, //secret key
           {
             expiresIn: "2h", // exp field
