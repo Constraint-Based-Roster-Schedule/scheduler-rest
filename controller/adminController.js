@@ -47,6 +47,11 @@ const addUser = async (req,res)=>{
   }
     
 }
+const getProfileDetails= async(req, res)=>{
+  if(!req.body){
+    return res.status()
+  }
+}
 
 
 module.exports = {

@@ -15,6 +15,7 @@ router.get("/", function(req, res, next) {
 });
 router.use("/doctor", doctorRouter)
 router.use("/admin",admniRouter)
+router.use("/consultant",consultantRouter)
 //FIXME: uncomment the controllers after implementation
 /*
 router.post("/add_user", userController.addUser) ; 
