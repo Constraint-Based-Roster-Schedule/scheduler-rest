@@ -1,7 +1,7 @@
 const Doctor = require("../models/doctor");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
-const Admin=require('../models/admin')
+const Admin = require("../models/admin");
 const getUserDetails = async (req, res) => {
   const userName = req.body.userName;
   const userType = req.body.type;
@@ -23,15 +23,18 @@ const getUserDetails = async (req, res) => {
       console.log(userDetails);
       wardDetails = await Ward.findOne({ id: userDetails.wardID });
       console.log(wardDetails);
+      console.log(wardDetails.wardNumber);
       return res.status(200).json({
         success: true,
-        msg: "get admin profile details correctly",
+        msg: "get doctor profile details correctly",
         fullName: userDetails.firstName + " " + userDetails.lastName,
         email: userDetails.emailaddress,
         address: userDetails.address,
         telephone: userDetails.telephone,
         emailaddress: userDetails.emailaddress,
         userName: userDetails.userName,
+        wardName: wardDetails.wardName,
+        wardID: wardDetails.wardNumber,
       });
       // res.send(userDetails);
     }
@@ -49,10 +52,10 @@ const getUserDetails = async (req, res) => {
     } else {
       console.log(userDetails);
       wardDetails = await Ward.findOne({ id: userDetails.wardID });
-      console.log(wardDetails);
+      console.log(wardDetails.wardName);
       return res.status(200).json({
         success: true,
-        msg: "get profile details correctly",
+        msg: "get consultant profile details correctly",
         fullName: userDetails.firstName + " " + userDetails.lastName,
         email: userDetails.emailaddress,
         address: userDetails.address,
@@ -61,12 +64,11 @@ const getUserDetails = async (req, res) => {
         wardName: wardDetails.wardName,
         wardId: wardDetails.wardNumber,
         userName: userDetails.userName,
-        speciality:userDetails.speciality
+        speciality: userDetails.speciality,
       });
       // res.send(userDetails);
     }
   }
-
 
   // get admin details
   else if (userType === "3") {
@@ -83,7 +85,7 @@ const getUserDetails = async (req, res) => {
       console.log(wardDetails);
       return res.status(200).json({
         success: true,
-        msg: "get profile details correctly",
+        msg: "get admin profile details correctly",
         fullName: userDetails.firstName + " " + userDetails.lastName,
         email: userDetails.emailaddress,
         address: userDetails.address,
@@ -92,7 +94,7 @@ const getUserDetails = async (req, res) => {
         wardName: wardDetails.wardName,
         wardId: wardDetails.wardNumber,
         userName: userDetails.userName,
-        speciality:userDetails.speciality
+        speciality: userDetails.speciality,
       });
       // res.send(userDetails);
     }
