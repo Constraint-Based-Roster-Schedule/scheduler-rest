@@ -6,6 +6,7 @@ const adminAuthToken = async (req, res, next) => {
   //take the token from the header
 
   const token = req.header("x-auth-token");
+  
   if (!token) {
     console.log("token not found");
     res.status(401).json({
@@ -17,7 +18,7 @@ const adminAuthToken = async (req, res, next) => {
     });
   } else {
     //authenticate token
-
+    
     try {
       //verify using secret key
       const user = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -31,6 +32,9 @@ const adminAuthToken = async (req, res, next) => {
           ],
         });
       }
+      
+      req.userID = user.userID
+       
       next();
     } catch {
       res.status(403).json({
