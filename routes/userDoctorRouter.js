@@ -1,7 +1,7 @@
 const express=require("express");
 const router=express.Router();
 const doctorController=require("../controller/doctorController")
-const userController=require("../controller/userController")
+
 
 router.get('/getUser',doctorController.getUser)
 router.get("/getInNotif", doctorController.getInNotif) 
@@ -20,6 +20,6 @@ router.all('/getRosterObject',doctorController.getIndividualRoster);
 router.get('/getShiftNames',doctorController.getShiftNames);
 
 
-router.post('/userDetails',userController.getUserDetails)
+router.post('/userDetails',doctorController.getUserDetails)
 
 module.exports=router;
