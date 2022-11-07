@@ -24,7 +24,10 @@ const putNotif = async (req, res, next) => {
   if (!req.body) {
     return res.status(201).json({success: false, msg: "can't have empty body"}) ;
   } else {
+    var fromID="633b8d8c6519cbf196d8e5a1";
+    req.body.fromID=fromID;
     var request1 = new exchangeRequestModel(req.body) ;
+
     request1.save(function (err, request1) {
       if (err) return console.error(err);
       console.log(request1._id + " saved to exchangeRequests collection.");
