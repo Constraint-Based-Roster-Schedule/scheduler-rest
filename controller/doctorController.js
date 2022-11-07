@@ -187,65 +187,6 @@ const getUserDetails = async (req, res) => {
     }
   }
 
-  // get consultant details
-  else if (userType === "2") {
-    userDetails = await Consultant.findOne({ emailaddress: userName });
-    if (!userDetails) {
-      console.log("consultant not found");
-      return res.status(500).json({
-        success: false,
-        msg: "errroorrrrrrrrrr",
-      });
-    } else {
-      console.log(userDetails);
-      wardDetails = await Ward.findOne({ id: userDetails.wardID });
-      console.log(wardDetails.wardName);
-      return res.status(200).json({
-        success: true,
-        msg: "get consultant profile details correctly",
-        fullName: userDetails.firstName + " " + userDetails.lastName,
-        email: userDetails.emailaddress,
-        address: userDetails.address,
-        telephone: userDetails.telephone,
-        emailaddress: userDetails.emailaddress,
-        wardName: wardDetails.wardName,
-        wardId: wardDetails.wardNumber,
-        userName: userDetails.userName,
-        speciality: userDetails.speciality,
-      });
-      // res.send(userDetails);
-    }
-  }
-
-  // get admin details
-  else if (userType === "3") {
-    userDetails = await Admin.findOne({ emailaddress: userName });
-    if (!userDetails) {
-      console.log("consultant not found");
-      return res.status(500).json({
-        success: false,
-        msg: "errroorrrrrrrrrr",
-      });
-    } else {
-      console.log(userDetails);
-      wardDetails = await Ward.findOne({ id: userDetails.wardID });
-      console.log(wardDetails);
-      return res.status(200).json({
-        success: true,
-        msg: "get admin profile details correctly",
-        fullName: userDetails.firstName + " " + userDetails.lastName,
-        email: userDetails.emailaddress,
-        address: userDetails.address,
-        telephone: userDetails.telephone,
-        emailaddress: userDetails.emailaddress,
-        wardName: wardDetails.wardName,
-        wardId: wardDetails.wardNumber,
-        userName: userDetails.userName,
-        speciality: userDetails.speciality,
-      });
-      // res.send(userDetails);
-    }
-  }
 };
 
 
