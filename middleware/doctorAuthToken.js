@@ -31,7 +31,9 @@ const doctorAuthToken = async (req, res, next) => {
           ],
         });
       }
+
       req.userID=user.userID;
+
       next();
     } catch {
       res.status(403).json({
