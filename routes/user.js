@@ -19,7 +19,7 @@ router.use("/consultant",consultantRouter)
 //FIXME: uncomment the controllers after implementation
 /*
 router.post("/add_user", userController.addUser) ; 
-router.get("/get_user", userController.getUser) ;
+
 */ 
 
 
