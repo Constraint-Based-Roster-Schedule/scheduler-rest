@@ -28,7 +28,9 @@ const login = async (req, res) => {
       if (isAuth) {
         //create token
         const token = JWT.sign(
+
           { userName: emailAddress, userType: type, userID: user._id}, //attributes that we want to get in frontend
+
           process.env.ACCESS_TOKEN_SECRET, //secreat key
           {
             expiresIn: "2h", //
