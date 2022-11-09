@@ -2,7 +2,7 @@ const Doctor = require("../models/doctor");
 const express = require("express");
 const exchangeRequestModel = require("../models/exchangeRequest")
 const mongoose = require("mongoose");
-
+const Ward=require('../models/ward')
 
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
@@ -17,14 +17,30 @@ const getUser = async (req, res) => {
 
 const getInNotif = async (req, res) => {
   
+  var recievedByID = req.userID ;
 
+  console.log(recievedByID);
+  try {
+    var docs = await exchangeRequestModel.find({toID : recievedByID}) ;
+  docs.forEach(element => {
+    console.log(element);
+    
+  });
+  return res.status(200).json(docs)   
+  } catch (error) {
+    return console.error(error)
+  }
+  
 
 }
 const putNotif = async (req, res, next) => {
   if (!req.body) {
     return res.status(201).json({success: false, msg: "can't have empty body"}) ;
   } else {
+    var fromID="633b8d8c6519cbf196d8e5a1";
+    req.body.fromID=fromID;
     var request1 = new exchangeRequestModel(req.body) ;
+
     request1.save(function (err, request1) {
       if (err) return console.error(err);
       console.log(request1._id + " saved to exchangeRequests collection.");
@@ -136,6 +152,48 @@ const getShiftNames=(req,res)=>{
   return res.status(200).json({"shiftNames":shiftNames});
 }
 
+const getUserDetails = async (req, res) => {
+  const userId = req.userID;
+  console.log(userId);
+  const userType = req.body.type;
+  console.log(req.body);
+  
+  let userDetails = null;
+  let wardDetails = null;
+ 
+
+  if (userType === "1") {
+    userDetails = await Doctor.findOne({ id: userId });
+    if (!userDetails) {
+      console.log("doctor not found");
+      return res.status(500).json({
+        success: false,
+        msg: "errroorrrrrrrrrr",
+      });
+    } else {
+      console.log(userDetails);
+      wardDetails = await Ward.findOne({ id: userDetails.wardID });
+      console.log(wardDetails);
+      console.log(wardDetails.wardNumber);
+      return res.status(200).json({
+        success: true,
+        msg: "get doctor profile details correctly",
+        fullName: userDetails.firstName + " " + userDetails.lastName,
+        email: userDetails.emailaddress,
+        address: userDetails.address,
+        telephone: userDetails.telephone,
+        emailaddress: userDetails.emailaddress,
+        userName: userDetails.userName,
+        wardName: wardDetails.wardName,
+        wardID: wardDetails.wardNumber,
+      });
+      // res.send(userDetails);
+    }
+  }
+
+};
+
+
 module.exports = {
-  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest
+  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails
 };
