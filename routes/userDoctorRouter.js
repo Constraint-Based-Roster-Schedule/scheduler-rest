@@ -20,4 +20,6 @@ router.all('/getRosterObject',doctorController.getIndividualRoster);
 router.get('/getShiftNames',doctorController.getShiftNames);
 
 
+router.post('/userDetails',doctorController.getUserDetails)
+
 module.exports=router;
