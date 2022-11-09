@@ -14,7 +14,7 @@ const getUser = async (req, res) => {
   res.send(doctorList);
 };
 const getUserDetails = async (req, res) => {
-  const userName = req.body.userName;
+  const userName = req.userID;
   const userType = req.body.type;
   console.log(req.body);
   const a = null;
@@ -26,7 +26,7 @@ const getUserDetails = async (req, res) => {
 
   // get consultant details
   if (userType === "2") {
-    userDetails = await Consultant.findOne({ emailaddress: userName });
+    userDetails = await Consultant.findOne({ id: userName });
     if (!userDetails) {
       console.log("consultant not found");
       return res.status(500).json({

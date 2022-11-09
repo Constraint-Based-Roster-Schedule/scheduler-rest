@@ -150,16 +150,17 @@ const getShiftNames=(req,res)=>{
 }
 
 const getUserDetails = async (req, res) => {
-  const userName = req.body.userName;
+  const userId = req.userID;
+  console.log(userId);
   const userType = req.body.type;
   console.log(req.body);
-  const a = null;
+  
   let userDetails = null;
   let wardDetails = null;
-  console.log(userName);
+ 
 
   if (userType === "1") {
-    userDetails = await Doctor.findOne({ emailaddress: userName });
+    userDetails = await Doctor.findOne({ id: userId });
     if (!userDetails) {
       console.log("doctor not found");
       return res.status(500).json({

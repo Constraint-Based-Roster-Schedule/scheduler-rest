@@ -13,6 +13,7 @@ var router = express.Router();
 router.get("/", function(req, res, next) {
   res.send("This is user route");
 });
+// send through the middleware
 router.use("/doctor",doctorAuthToken, doctorRouter)
 router.use("/admin",admniRouter)
 router.use("/consultant",consultantRouter)
