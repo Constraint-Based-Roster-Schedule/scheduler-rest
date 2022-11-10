@@ -13,7 +13,7 @@ var router = express.Router();
 router.get("/", function(req, res, next) {
   res.send("This is user route");
 });
-router.use("/doctor",doctorAuthToken, doctorRouter)
+router.use("/doctor",doctorRouter)
 router.use("/admin",admniRouter)
 //FIXME: uncomment the controllers after implementation
 /*

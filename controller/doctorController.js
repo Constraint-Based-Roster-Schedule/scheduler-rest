@@ -1,7 +1,12 @@
 const Doctor = require("../models/doctor");
 const express = require("express");
 const exchangeRequestModel = require("../models/exchangeRequest")
+const rosterSchema=require('../models/rosterSchema');
 const mongoose = require("mongoose");
+const http = require('http');
+const url = require('url');
+const { response } = require("express");
+const { start } = require("repl");
 
 
 const getUser = async (req, res) => {
@@ -103,41 +108,26 @@ const submitPreferrableSlots=(req,res)=>{
   return res.send(req.body);
 }
 
-const getIndividualRoster=(req,res)=>{
-  const myShifts={
-        "1":[0,1,0],
-        "2":[1,0,0],
-        "3":[0,1,1],
-        "4":[1,1,0],
-        "5":[1,0,1],
-        "6":[1,1,0],
-        "7":[0,1,0],
-        "8":[0,1,1],
-        "9":[1,1,0],
-        "10":[0,1,1],
-        "11":[1,0,0],
-        "12":[1,1,0],
-        "13":[0,1,1],
-        "14":[0,1,0],
-        "15":[1,0,1],
-        "16":[1,1,0],
-        "17":[0,1,1],
-        "18":[1,0,0],
-        "19":[1,1,0],
-        "20":[1,0,1],
-        "21":[0,1,1],
-        "22":[0,1,1],
-        "23":[0,0,0],
-        "24":[0,1,0],
-        "25":[1,0,0],
-        "26":[0,1,1],
-        "27":[1,0,1],
-        "28":[0,1,1],
-        "29":[0,1,1],
-        "30":[0,1,0],
-        "31":[1,0,1],
-    };
-    
+const getIndividualRoster=async(req,res)=>{
+
+  const month=req.query.month;
+  
+  function getMonthFromString(mon){
+   return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
+  }
+
+  const int_month=getMonthFromString(month)-1;
+
+  const shiftNames=[
+    ["Morning Shift","#33ccff"],
+    ["Evening Shift","#F58B44"],
+    ["Night Shift","#66ff66"],
+    ]
+  
+
+  const myShifts_abstract=await rosterSchema.find({month:month},null,{limit:1});
+  const myShifts=myShifts_abstract[0].days;
+  console.log(myShifts);
   return res.status(200).json({"myShifts":myShifts});
 }
 
