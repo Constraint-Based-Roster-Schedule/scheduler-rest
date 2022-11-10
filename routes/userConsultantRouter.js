@@ -4,4 +4,5 @@ const consultantController=require("../controller/consultantController")
 
 router.get('/getUser',consultantController.getUser)
 
+router.post('/userDetails',consultantController.getUserDetails)
 module.exports=router;
