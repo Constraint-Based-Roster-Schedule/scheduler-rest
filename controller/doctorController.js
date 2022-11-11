@@ -119,6 +119,8 @@ const getIndividualRoster=async(req,res)=>{
 
   const month=req.query.month;
   const year=req.query.year;
+  const months=req.query.months;
+  console.log(months);
   
   function getMonthFromString(mon){
    return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
@@ -130,10 +132,21 @@ const getIndividualRoster=async(req,res)=>{
   const shiftNames=shiftNames_abstratct[0].shifts;
   console.log(shiftNames);
 
-  const myShifts_abstract=await rosterSchema.find({month:month},null,{limit:1});
-  const myShifts=myShifts_abstract[0].days;
-  console.log(myShifts);
-  return res.status(200).json({"shiftNames":shiftNames,"myShifts":myShifts});
+  
+  const myShifts_abstract=[]
+  const myShifts_abstract0=await rosterSchema.find({month:months[0]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract0[0].days)
+  const myShifts_abstract1=await rosterSchema.find({month:months[1]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract1[0].days)
+  const myShifts_abstract2=await rosterSchema.find({month:months[2]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract2[0].days)
+  const myShifts_abstract3=await rosterSchema.find({month:months[3]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract3[0].days)
+  
+  //const myShifts=myShifts_abstract[0].days;
+  console.log(myShifts_abstract);
+  // console.log(myShifts);
+  return res.status(200).json({"shiftNames":shiftNames,"myShifts":myShifts_abstract});
 }
 
 const getShiftNames=async(req,res)=>{
