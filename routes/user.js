@@ -13,12 +13,15 @@ var router = express.Router();
 router.get("/", function(req, res, next) {
   res.send("This is user route");
 });
-router.use("/doctor",doctorAuthToken, doctorRouter)
+
+router.use("/doctor",doctorRouter)
+
 router.use("/admin",admniRouter)
+router.use("/consultant",consultantRouter)
 //FIXME: uncomment the controllers after implementation
 /*
 router.post("/add_user", userController.addUser) ; 
-router.get("/get_user", userController.getUser) ;
+
 */ 
 
 
