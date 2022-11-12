@@ -1,6 +1,7 @@
 const Admin= require("../models/admin");
 const Doctor=require("../models/doctor");
 const Consultant=require("../models/consultant");
+const WardSchema=require("../models/ward");
 const express = require("express");
 const app=express();
 
@@ -107,7 +108,42 @@ const getUserDetails = async (req, res) => {
   }
 };
 
+const getWardDetails=async(req,res)=>{
+  const wardID=req.query.wardID;
+
+  const ward_det=await WardSchema.find({wardNumber:wardID},null,{limit:1});
+  const wardName=ward_det[0].wardName;
+  const docIDList=ward_det[0].doctorList;
+  const consultant_id=ward_det[0].consultantID;
+
+  const consultant_id_string=consultant_id.toString();
+  const consultantData_abstract=await Consultant.findById(consultant_id_string).exec();
+  
+  const consultant_data=[]
+  consultant_data.push(consultantData_abstract.firstName)
+  consultant_data.push(consultantData_abstract.lastName)
+  consultant_data.push(consultantData_abstract.emailaddress)
+  consultant_data.push(consultantData_abstract.telephone)
+  // console.log(consultant_data);
+  
+  var data=[]
+  for(const d of docIDList){
+    const id_string=d.toString();
+    const result=await Doctor.findById(id_string).exec();
+    let required_data=[]
+    required_data.push(result.firstName);
+    required_data.push(result.lastName);
+    required_data.push(result.emailaddress);
+    required_data.push(result.telephone);
+    //console.log(required_data);
+    data.push(required_data);         
+      
+  }
+  //console.log(data);
+  return res.status(200).json({"wardName":wardName,"docData":data,"consultantData":consultant_data});
+}
+
 
 module.exports = {
-  getUser,addUser,getUserDetails
+  getUser,addUser,getUserDetails,getWardDetails
 };

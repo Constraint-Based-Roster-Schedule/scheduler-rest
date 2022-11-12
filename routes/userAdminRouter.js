@@ -6,4 +6,5 @@ router.get('/getUser',adminController.getUser)
 router.all('/addUser',adminController.addUser)
 
 router.post('/userDetails',adminController.getUserDetails)
+router.get('/getWardDetails',adminController.getWardDetails)
 module.exports=router;

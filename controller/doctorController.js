@@ -120,7 +120,7 @@ const getIndividualRoster=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const months=req.query.months;
-  console.log(months);
+  //console.log(months);
   
   function getMonthFromString(mon){
    return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
@@ -130,7 +130,7 @@ const getIndividualRoster=async(req,res)=>{
 
   const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
   const shiftNames=shiftNames_abstratct[0].shifts;
-  console.log(shiftNames);
+  //console.log(shiftNames);
 
   
   const myShifts_abstract=[]
@@ -144,7 +144,7 @@ const getIndividualRoster=async(req,res)=>{
   myShifts_abstract.push(myShifts_abstract3[0].days)
   
   //const myShifts=myShifts_abstract[0].days;
-  console.log(myShifts_abstract);
+  //console.log(myShifts_abstract);
   // console.log(myShifts);
   return res.status(200).json({"shiftNames":shiftNames,"myShifts":myShifts_abstract});
 }
@@ -155,7 +155,7 @@ const getShiftNames=async(req,res)=>{
   const year=req.query.year;
   const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
   const shiftNames=shiftNames_abstratct[0].shifts;
-  console.log(shiftNames);
+  //console.log(shiftNames);
   return res.status(200).json({"shiftNames":shiftNames});
 }
 
