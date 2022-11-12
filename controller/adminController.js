@@ -23,14 +23,18 @@ const getUser = async (req, res) => {
 
 const addUser = async (req,res)=>{
   if(!req.body){
-    return res.status(201).json({success:false,msg:"can't have an empty body"})
+    return res.status(201).json({success:false,msg:"must have a body"})
   }else{
     if(req.body.type==="1"){
+
+      console.log(req.body) //TODO remove me
+
       var pass=req.body.password;
       const salt=await bcrypt.genSalt(10);
       var encryptedPass=await bcrypt.hash(pass,salt);
       req.body.password=encryptedPass;
-      console.log(req.body);
+      
+
       var addUserRequestD=new Doctor(req.body);
       addUserRequestD.save(function(err,addUserRequestD){
         if (err){
@@ -54,6 +58,8 @@ const addUser = async (req,res)=>{
         console.log(addUserRequest._id+" added to the database")
         return res.status(200).json({success:true,msg:"User added to system successfully"})
       })
+    }else{
+      return res.status(201).json({success:false,msg:"empty body or type field invalid"})
     }
     
   }
