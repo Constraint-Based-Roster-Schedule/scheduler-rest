@@ -10,7 +10,7 @@ const wardSchema = new mongoose.Schema({
         required : true
     }, 
     consultantID : {
-        type : mongoose.Schema.Types.ObjectId, 
+        type : Number, 
         ref : 'Consultant', 
         required : false
     }, 
