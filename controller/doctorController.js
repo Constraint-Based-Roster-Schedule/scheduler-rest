@@ -1,8 +1,18 @@
 const Doctor = require("../models/doctor");
 const express = require("express");
 const exchangeRequestModel = require("../models/exchangeRequest")
+const rosterSchema=require('../models/rosterSchema');
+const shifts =require("../models/shifts")
 const mongoose = require("mongoose");
+
+const http = require('http');
+const url = require('url');
+const { response } = require("express");
+const { start } = require("repl");
+
+
 const Ward=require('../models/ward')
+
 
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
@@ -105,50 +115,47 @@ const submitPreferrableSlots=(req,res)=>{
   return res.send(req.body);
 }
 
-const getIndividualRoster=(req,res)=>{
-  const myShifts={
-        "1":[0,1,0],
-        "2":[1,0,0],
-        "3":[0,1,1],
-        "4":[1,1,0],
-        "5":[1,0,1],
-        "6":[1,1,0],
-        "7":[0,1,0],
-        "8":[0,1,1],
-        "9":[1,1,0],
-        "10":[0,1,1],
-        "11":[1,0,0],
-        "12":[1,1,0],
-        "13":[0,1,1],
-        "14":[0,1,0],
-        "15":[1,0,1],
-        "16":[1,1,0],
-        "17":[0,1,1],
-        "18":[1,0,0],
-        "19":[1,1,0],
-        "20":[1,0,1],
-        "21":[0,1,1],
-        "22":[0,1,1],
-        "23":[0,0,0],
-        "24":[0,1,0],
-        "25":[1,0,0],
-        "26":[0,1,1],
-        "27":[1,0,1],
-        "28":[0,1,1],
-        "29":[0,1,1],
-        "30":[0,1,0],
-        "31":[1,0,1],
-    };
-    
-  return res.status(200).json({"myShifts":myShifts});
+const getIndividualRoster=async(req,res)=>{
+
+  const month=req.query.month;
+  const year=req.query.year;
+  const months=req.query.months;
+  console.log(months);
+  
+  function getMonthFromString(mon){
+   return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
+  }
+
+  const int_month=getMonthFromString(month)-1;
+
+  const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
+  const shiftNames=shiftNames_abstratct[0].shifts;
+  console.log(shiftNames);
+
+  
+  const myShifts_abstract=[]
+  const myShifts_abstract0=await rosterSchema.find({month:months[0]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract0[0].days)
+  const myShifts_abstract1=await rosterSchema.find({month:months[1]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract1[0].days)
+  const myShifts_abstract2=await rosterSchema.find({month:months[2]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract2[0].days)
+  const myShifts_abstract3=await rosterSchema.find({month:months[3]},null,{limit:1});
+  myShifts_abstract.push(myShifts_abstract3[0].days)
+  
+  //const myShifts=myShifts_abstract[0].days;
+  console.log(myShifts_abstract);
+  // console.log(myShifts);
+  return res.status(200).json({"shiftNames":shiftNames,"myShifts":myShifts_abstract});
 }
 
-const getShiftNames=(req,res)=>{
-  const shiftNames={
-    '1':"Morning Shift",
-    "2":"Evening Shift",
-    "3":"Night Shift",
-  }
+
+const getShiftNames=async(req,res)=>{
+  const month=req.query.month;
+  const year=req.query.year;
+  const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
+  const shiftNames=shiftNames_abstratct[0].shifts;
+  console.log(shiftNames);
   return res.status(200).json({"shiftNames":shiftNames});
 }
 
