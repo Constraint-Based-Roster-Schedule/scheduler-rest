@@ -1,7 +1,9 @@
-const Admin = require("../models/admin");
-const Doctor = require("../models/doctor");
-const Consultant = require("../models/consultant");
-const Ward=require('../models/ward')
+
+const Admin= require("../models/admin");
+const Doctor=require("../models/doctor");
+const Consultant=require("../models/consultant");
+const Ward=require("../models/ward");
+
 const express = require("express");
 const app = express();
 
@@ -122,8 +124,7 @@ const addWard = async (req, res) => {
     return res.status(500).json({
       success:false,
       msg:'can not have empty body',
-
-    })
+  })
   }
   else{
     console.log(req.body);
@@ -167,11 +168,60 @@ const getWardNumbersNames=async(req,res)=>{
     wardNumbers:wardNumbers,
     msg:'successfully get the ward numbers and ward names'
   })
+}     
+
+const getAvailableWards=async(req,res)=>{
+  const ward_det=await Ward.find();
+  //console.log(ward_det);
+  const availableWards=[];
+  for(const ward of ward_det){
+    availableWards.push(ward.wardNumber);
+  }
+  //console.log(availableWards);
+  return res.status(200).json({"availableWards":availableWards});
 }
+
+const getWardDetails=async(req,res)=>{
+  const wardID=req.query.wardID;
+
+  const ward_det=await Ward.find({wardNumber:wardID},null,{limit:1});
+  //console.log(ward_det)
+  const wardName=ward_det[0].wardName;
+  const docIDList=ward_det[0].doctorList;
+  // const consultant_id=ward_det[0].consultantID;
+
+  // const consultant_id_string=consultant_id.toString();
+  // const consultantData_abstract=await Consultant.findById(consultant_id_string).exec();
+  
+  const consultant_data=["saman","kumara","skhdiushd","iuefhaw"]
+  // consultant_data.push(consultantData_abstract.firstName)
+  // consultant_data.push(consultantData_abstract.lastName)
+  // consultant_data.push(consultantData_abstract.emailaddress)
+  // consultant_data.push(consultantData_abstract.telephone)
+  // console.log(consultant_data);
+  
+  var data=[]
+  for(const d of docIDList){
+    const id_string=d.toString();
+    const result=await Doctor.findById(id_string).exec();
+    let required_data=[]
+    required_data.push(result.firstName);
+    required_data.push(result.lastName);
+    required_data.push(result.emailaddress);
+    required_data.push(result.telephone);
+    //console.log(required_data);
+    data.push(required_data);         
+      
+  }
+  //console.log(data);
+  return res.status(200).json({"wardName":wardName,"docData":data,"consultantData":consultant_data});
+}
+
+
 module.exports = {
-  getUser,
-  addUser,
-  getUserDetails,
-  addWard,
+  getUser,addUser,getUserDetails,getWardDetails,getAvailableWards,addWard,
   getWardNumbersNames
+
+   
+
 };
