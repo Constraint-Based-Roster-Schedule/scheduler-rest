@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
+const SchedulerController = require("./schedulerController");
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
   if (!doctorList) {
@@ -80,25 +81,31 @@ const getCountOfDoctors = async (req, res) => {
 };
 const generateRoster = async (req, res) => {
   console.log(req.body);
-  // send the below details
-  // {
-  //   month: '2022-03',
-  //   numOfDoctors: 3,
-  //   numOfMaxNightShifts: '2',
-  //   numOfMaximumDoctors: '2',
-  //   numOfMaximumShifts: '2',
-  //   numOfMinimumDoctors: '2',
-  //   numOfMinimumShifts: '2'
-  // }
-  let roster = null;
+  const scheduler = new SchedulerController(req.body) ;
+  // TODO: check the body here
+  const dataCheck = scheduler.verifyBody() ;
+  if (!dataCheck) {
+    return res.status(500).json({
+      success: false,
+      msg: "body verification failed",
+    });
+  }
+  const genRoster = await scheduler.dispatchAPIRequest() ;
+  console.log(genRoster);
+  
   // assign the roster to here from the algorithem
-  isGenerated = false;
+  if (genRoster.message === "success") {
+    isGenerated = true ;
+  } else {
+    isGenerated = false ;
+  }
+
+  
   if (isGenerated) {
-    roster = { 1: [1, 2, 3], 2: [1, 2, 3] };
     return res.status(200).json({
       success: true,
       msg: "roster generated according to constraints",
-      roster: roster,
+      roster: genRoster.roster
     });
   } else {
     console.log("no roster for given costraints");
