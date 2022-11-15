@@ -30,14 +30,18 @@ const addUser = async (req,res)=>{
   }else{
     if(req.body.type==="1"){
 
-      console.log(req.body) //TODO remove me
+
 
       var pass=req.body.password;
       const salt=await bcrypt.genSalt(10);
       var encryptedPass=await bcrypt.hash(pass,salt);
       req.body.password=encryptedPass;
-      
-
+      const wardNumber=req.body.wardID;
+      const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
+      const ward_id=(wardDetails[0]._id).toString();
+      req.body.wardID=ward_id;
+      req.body.docID=5;
+      console.log(req.body) //TODO remove me
       var addUserRequestD=new Doctor(req.body);
       addUserRequestD.save(function(err,addUserRequestD){
         if (err){
