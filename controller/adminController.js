@@ -36,7 +36,7 @@ const addUser = async (req,res)=>{
       const salt=await bcrypt.genSalt(10);
       var encryptedPass=await bcrypt.hash(pass,salt);
       req.body.password=encryptedPass;
-      
+      req.body.docID="2"
 
       var addUserRequestD=new Doctor(req.body);
       addUserRequestD.save(function(err,addUserRequestD){
@@ -147,7 +147,7 @@ const getWardNumbersNames=async(req,res)=>{
   //   if( err) throw err
   //   console.log(result);
   // })
-  wardDetails= await Ward.find({},{_id:0,wardName:1,wardNumber:1})
+  const wardDetails= await Ward.find({},{_id:0,wardName:1,wardNumber:1})
   if(!wardDetails){
     return res.status(500).json({
       success:false,
