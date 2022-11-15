@@ -36,6 +36,10 @@ const doctorSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    docID:{
+        type:String,
+        required:true
     }
 },{collection : "doctors"});
 
