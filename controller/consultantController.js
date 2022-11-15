@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
+const Shift= require('../models/shifts')
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
   if (!doctorList) {
@@ -60,7 +61,6 @@ const getCountOfDoctors = async (req, res) => {
   let doctors = null;
   let doctorCount = 0;
   doctors = await Doctor.count({ wardID: wardID });
-
   if (doctors == 0) {
     console.log("No doctors for this ward");
     return res.status(500).json({
@@ -77,6 +77,26 @@ const getCountOfDoctors = async (req, res) => {
       doctorCount: doctors,
     });
   }
+};
+const getShiftPerDay = async (req, res) => {
+  console.log(req.body);
+  console.log("ddddddddddddddddddddd");
+  wardID = req.body.wardId;
+  shiftCountOfWard = await Ward.findOne({ _id: wardID }, { shiftsPerDay: 1 });
+  if (!shiftCountOfWard) {
+    console.log("not found");
+    res.status(201).json({
+      msg: "no ward ",
+      success: false,
+    });
+  } else {
+    res.status(200).json({
+      msg: "ward found",
+      shiftCountOfWard: shiftCountOfWard.shiftsPerDay,
+      success: true,
+    });
+  }
+  console.log(shiftCountOfWard.shiftsPerDay);
 };
 const generateRoster = async (req, res) => {
   console.log(req.body);
@@ -108,10 +128,33 @@ const generateRoster = async (req, res) => {
     });
   }
 };
-
+const saveShift = async (req, res) => {
+  console.log("in the save shift modle");
+  if (!req.body) {
+    res.status(500).json({
+      success: false,
+      msg: "cannot have empty body",
+    });
+  } else {
+    console.log(req.body);
+    var newShift = Shift(req.body);
+    // await newShift.save(function (err, newShift) {
+    //   if (err) {
+    //     console.error(err);
+    //     return res.status(201).json({ success: false, msg: "Error" });
+    //   }
+    //   console.log(newShift._id + "shift added to the database");
+    //   return res
+    //     .status(200)
+    //     .json({ success: true, msg: "shift added to system successfully" });
+    // });
+  }
+};
 module.exports = {
   getUser,
   getUserDetails,
   getCountOfDoctors,
   generateRoster,
+  saveShift,
+  getShiftPerDay,
 };
