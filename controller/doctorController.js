@@ -76,26 +76,33 @@ const acceptRequest = async (req,res) => {
 }
 
 
-const getData=(req,res)=>{
-    const myShifts={
-        "1":[0,1],
-        "2":[1],
-        "3":[0,1],
-        "4":[2],
-        "5":[1],
-        "6":[1,2],
-        "7":[0,1],
-        "8":[0,1],
-        "9":[1],
-        "10":[2],
-        "11":[1,2],
-        "12":[0,1],
-        "13":[2],
-        "14":[1],
-        "15":[1,2]
-    };
-    
-    return res.status(200).json({"myShifts":myShifts});
+const getData=async(req,res)=>{
+  const month=req.query.month;
+  const year=req.query.year;
+  const wardID=req.query.wardID;
+  const intID=req.query.intID;
+  const wardId_string=wardID.toString();
+  //console.log(wardId_string)
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardId_string);
+  const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
+  const wardRoster=wardRoster_abstract[0].days;
+  console.log(wardRoster);
+  let myShifts=[]
+  for(const day of wardRoster){
+    let dayShifts=[]
+    let shift_num=0;
+    for(const shift of day){
+      if(shift.includes(intID.toString())){
+        dayShifts.push(shift_num)
+      }
+      shift_num+=1;
+    }
+    myShifts.push(dayShifts)   
+  }
+  console.log(myShifts);
+  
+  return res.status(200).json({"myShifts":myShifts});
 }
 
 
