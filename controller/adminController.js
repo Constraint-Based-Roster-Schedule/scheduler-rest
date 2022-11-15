@@ -108,6 +108,25 @@ const getUserDetails = async (req, res) => {
   }
 };
 
+const getDoctorDetails=async(req,res)=>{
+  const docID=req.query.docID;
+  const doc_det=await Doctor.find({docID:docID},null,{limit:1});
+  const sending_data=[doc_det[0].firstName,doc_det[0].lastName,doc_det[0].address,doc_det[0].emailaddress,doc_det[0].telephone]
+  //console.log(sending_data);
+  return res.status(200).json({"doctorDetails":sending_data});
+}
+
+const getAllDoctors=async(req,res)=>{
+  const doc_det=await Doctor.find();
+  const allDoctors=[]
+  for(const doc of doc_det){
+    const doc_detail=[doc.docID,doc.firstName,doc.lastName]
+    allDoctors.push(doc_detail)
+  }
+  console.log(allDoctors)
+  return res.status(200).json({"allDoctors":allDoctors});
+}
+
 const getAvailableWards=async(req,res)=>{
   const ward_det=await WardSchema.find();
   //console.log(ward_det);
@@ -157,5 +176,5 @@ const getWardDetails=async(req,res)=>{
 
 
 module.exports = {
-  getUser,addUser,getUserDetails,getWardDetails,getAvailableWards
+  getUser,addUser,getUserDetails,getWardDetails,getAvailableWards,getAllDoctors,getDoctorDetails
 };
