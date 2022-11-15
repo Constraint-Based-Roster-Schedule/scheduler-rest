@@ -3,7 +3,7 @@ const Admin= require("../models/admin");
 const Doctor=require("../models/doctor");
 const Consultant=require("../models/consultant");
 const Ward=require("../models/ward");
-
+const NumberOfDoctors=require("../models/numberOfDoctors")
 const express = require("express");
 const app = express();
 
