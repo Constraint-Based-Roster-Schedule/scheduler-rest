@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'); 
 
-const NumberOfDoctors = new mongoose.Schema({
+const numberOfDoctors = new mongoose.Schema({
     // _id : {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "_id",
@@ -8,6 +8,7 @@ const NumberOfDoctors = new mongoose.Schema({
     // }, 
     wardID : {
         type : mongoose.Schema.Types.ObjectId, 
+        ref : "Ward" ,
         required : true
     },
     number : {
@@ -16,4 +17,4 @@ const NumberOfDoctors = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("NumberOfDoctors", NumberOfDoctors) ;
+module.exports = mongoose.model("NumberOfDoctors", numberOfDoctors,"numberOfDoctors") ;
