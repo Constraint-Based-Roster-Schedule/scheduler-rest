@@ -38,6 +38,7 @@ const addUser = async (req,res)=>{
       req.body.password=encryptedPass;
 
 
+
       const wardNumber=req.body.wardID;
       const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
       const ward_id=(wardDetails[0]._id).toString();
