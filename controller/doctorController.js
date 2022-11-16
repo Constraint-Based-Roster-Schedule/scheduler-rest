@@ -86,8 +86,9 @@ const getData=async(req,res)=>{
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardId_string);
   const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
+  //console.log(id);
   const wardRoster=wardRoster_abstract[0].days;
-  console.log(wardRoster);
+
   let myShifts=[]
   for(const day of wardRoster){
     let dayShifts=[]
@@ -100,7 +101,7 @@ const getData=async(req,res)=>{
     }
     myShifts.push(dayShifts)   
   }
-  console.log(myShifts);
+  //console.log(myShifts);
   
   return res.status(200).json({"myShifts":myShifts});
 }
@@ -126,8 +127,12 @@ const getIndividualRoster=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const months=req.query.months;
+  // const wardID=req.query.wardID;
+  // const wardId_string=wardID.toString()
+  // const myID=req.query.myID
   //console.log(months);
-  
+  // var mongoose = require('mongoose');
+  // var id = mongoose.Types.ObjectId(wardId_string);
   function getMonthFromString(mon){
    return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
   }

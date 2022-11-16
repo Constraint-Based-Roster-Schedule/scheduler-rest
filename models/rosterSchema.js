@@ -10,6 +10,10 @@ const rosterSchema = new mongoose.Schema({
         type : String, 
         required : true
     },
+    year : {
+        type : String, 
+        required : true
+    },
     days : {
         type : Array,
         default : []
