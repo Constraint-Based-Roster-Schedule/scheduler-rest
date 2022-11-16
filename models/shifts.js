@@ -16,7 +16,7 @@ const shifts = new mongoose.Schema({
     },
     shifts : {
         type : Array,
-        default : []
+        required:true
     },
     wardID:{
         type:Number,
