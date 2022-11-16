@@ -38,6 +38,7 @@ const addUser = async (req,res)=>{
       req.body.password=encryptedPass;
 
 
+
       const wardNumber=req.body.wardID;
       const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
       const ward_id=(wardDetails[0]._id).toString();
@@ -168,7 +169,7 @@ const getWardNumbersNames=async(req,res)=>{
   //   if( err) throw err
   //   console.log(result);
   // })
-  wardDetails= await Ward.find({},{_id:0,wardName:1,wardNumber:1})
+  const wardDetails= await Ward.find({},{_id:0,wardName:1,wardNumber:1})
   if(!wardDetails){
     return res.status(500).json({
       success:false,

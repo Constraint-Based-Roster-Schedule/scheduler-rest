@@ -47,8 +47,8 @@ const putNotif = async (req, res, next) => {
   if (!req.body) {
     return res.status(201).json({success: false, msg: "can't have empty body"}) ;
   } else {
-    var fromID="633b8d8c6519cbf196d8e5a1";
-    req.body.fromID=fromID;
+    // var fromID="633b8d8c6519cbf196d8e5a1";
+    // req.body.fromID=fromID;
     var request1 = new exchangeRequestModel(req.body) ;
 
     request1.save(function (err, request1) {
@@ -76,27 +76,33 @@ const acceptRequest = async (req,res) => {
 }
 
 
-const getData=(req,res)=>{
-    const wardDoctors=[[1,'Thinira Wanasingha'],[2,'Sakuni Bandara'], [3,'Gamunu Bandara'], [4,'Harshani Bandara']];
-    const myShifts={
-        "1":[0,1],
-        "2":[1],
-        "3":[0,1],
-        "4":[2],
-        "5":[1],
-        "6":[1,2],
-        "7":[0,1],
-        "8":[0,1],
-        "9":[1],
-        "10":[2],
-        "11":[1,2],
-        "12":[0,1],
-        "13":[2],
-        "14":[1],
-        "15":[1,2]
-    };
-    
-    return res.status(200).json({"wardDoctors":wardDoctors,"myShifts":myShifts});
+const getData=async(req,res)=>{
+  const month=req.query.month;
+  const year=req.query.year;
+  const wardID=req.query.wardID;
+  const intID=req.query.intID;
+  const wardId_string=wardID.toString();
+  //console.log(wardId_string)
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardId_string);
+  const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
+  const wardRoster=wardRoster_abstract[0].days;
+  console.log(wardRoster);
+  let myShifts=[]
+  for(const day of wardRoster){
+    let dayShifts=[]
+    let shift_num=0;
+    for(const shift of day){
+      if(shift.includes(intID.toString())){
+        dayShifts.push(shift_num)
+      }
+      shift_num+=1;
+    }
+    myShifts.push(dayShifts)   
+  }
+  console.log(myShifts);
+  
+  return res.status(200).json({"myShifts":myShifts});
 }
 
 
@@ -147,6 +153,22 @@ const getIndividualRoster=async(req,res)=>{
   //console.log(myShifts_abstract);
   // console.log(myShifts);
   return res.status(200).json({"shiftNames":shiftNames,"myShifts":myShifts_abstract});
+}
+
+const getWardDoctors=async(req,res)=>{
+  const wardID=req.query.wardID;
+  const wardId_string=wardID.toString();
+  //console.log(wardId_string)
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardId_string);
+  const ward_doctors=await Doctor.find({wardID:wardID},null,{});
+  const doctorDetails=[]
+  for(const doc of ward_doctors){
+    const id_string=doc._id.toString();
+    doctorDetails.push([doc.docID,doc.firstName,doc.lastName,id_string])
+  }
+  //console.log(doctorDetails)
+  return res.status(200).json({"doctorDetails":doctorDetails});
 }
 
 
@@ -202,5 +224,5 @@ const getUserDetails = async (req, res) => {
 
 
 module.exports = {
-  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails
+  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors
 };
