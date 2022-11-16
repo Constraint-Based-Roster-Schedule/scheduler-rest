@@ -13,7 +13,12 @@ const rosterSchema = new mongoose.Schema({
     days : {
         type : Array,
         default : []
+    },
+    year : {
+        type : String,
+        required : true
+
     }
 });
 
-module.exports = mongoose.model("Roster", rosterSchema) ;
+module.exports = mongoose.model("Roster", rosterSchema, 'rosters') ;

@@ -5,7 +5,7 @@ const axios = require('axios');
 class SchedulerController {
     constructor(body) {
         this.body = body ;
-        this.url = "http://127.0.0.1:5000/schedule" //TODO: add remote server link here
+        this.url = "http://gamunub.pythonanywhere.com/schedule" //TODO: add remote server link here
     }
 
     verifyBody() {
@@ -13,8 +13,8 @@ class SchedulerController {
         const reqFields = ["doctor_num","shift_num","days_num","doctors_per_shift","leave_requests","preference_requests"]
         const recievedKeys = Object.keys(this.body) 
         for (const key in reqFields) {
-            console.log(key);
-            console.log(recievedKeys.includes(reqFields[key]));
+            // console.log(key);
+            // console.log(recievedKeys.includes(reqFields[key])); TODO remove this
             if (recievedKeys.includes(reqFields[key])) {
                 continue ;               
             } else {

@@ -4,6 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
+const Roster = require('../models/rosterSchema') ;
+
 const SchedulerController = require("./schedulerController");
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
@@ -116,9 +118,42 @@ const generateRoster = async (req, res) => {
   }
 };
 
+const saveRoster =  async (req, res)=> {
+  // getting the next month and year as strings
+  const nowDate = new Date();
+  const nextMonth = new Date() ;
+  nextMonth.setMonth(nowDate.getMonth() + 1) ;
+  const month = nextMonth.toLocaleString('default', { month: 'long' });
+  const year = nextMonth.getFullYear().toString();
+
+  //check request
+  const requiredFields = ["wardID", "roster"]
+  const recievedKeys = Object.keys(req.body) ;
+  for (const key in requiredFields) {
+    if (!recievedKeys.includes(requiredFields[key])) {
+      return res.status(400).json({success: false, message:"bad request"})
+    }
+  };
+  
+  //check if the roster is already present in the database
+  const isPresent = Roster.exists({month: month, year: year})
+  if (isPresent) {
+    return res.status(400).json({success: false, message: "roster already present"});
+  }
+  //save the roster
+  const wardID = mongoose.Types.ObjectId(req.body.wardID) ;
+  const roster = new Roster({wardID: wardID, month: month, days: req.body.roster, year: year});
+  await roster.save(err => {
+    if (err) return res.status(400).json({success: false, message: "database save failed"})
+  });
+  return res.status(200).json({success: true, message:"roster saved"}) 
+
+}
+
 module.exports = {
   getUser,
   getUserDetails,
   getCountOfDoctors,
   generateRoster,
+  saveRoster
 };
