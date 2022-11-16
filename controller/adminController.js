@@ -31,7 +31,7 @@ const addUser = async (req,res)=>{
     if(req.body.type==="1"){
 
 
-
+      console.log(req.body.type);
       var pass=req.body.password;
       const salt=await bcrypt.genSalt(10);
       var encryptedPass=await bcrypt.hash(pass,salt);
@@ -42,7 +42,7 @@ const addUser = async (req,res)=>{
       const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
       const ward_id=(wardDetails[0]._id).toString();
       req.body.wardID=ward_id;
-      console.log(wardDetails)
+      //console.log(wardDetails)
 
       var mongoose = require('mongoose');
       var id = mongoose.Types.ObjectId(ward_id);
@@ -90,9 +90,6 @@ const addUser = async (req,res)=>{
         console.log(addUserRequest._id+" added to the database")
         return res.status(200).json({success:true,msg:"User added to system successfully"})
       })
-    }else{
-      return res.status(201).json({success:false,msg:"empty body or type field invalid"})
-
     }
   }
 };
