@@ -61,7 +61,7 @@ const login = async (req, res) => {
       //console.log(isAuth);
       if (isAuth) {
         const token = JWT.sign(
-          { userName: emailAddress, userType: type, userID: user._id ,userFirstName:user.firstName,userLastName:user.lastName,userWardId:user.wardID}, //
+          { userName: emailAddress, userType: type, userID: user._id ,userFirstName:user.firstName,userLastName:user.lastName,wardId:user.wardID}, //
           process.env.ACCESS_TOKEN_SECRET, //secreat key
           {
             expiresIn: "2h", //

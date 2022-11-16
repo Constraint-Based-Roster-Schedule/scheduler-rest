@@ -4,7 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
-const Shift= require('../models/shifts')
+const Shift = require("../models/shifts");
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
   if (!doctorList) {
@@ -137,17 +137,30 @@ const saveShift = async (req, res) => {
     });
   } else {
     console.log(req.body);
+    var wardID = req.body.wardID;
+    var month = req.body.month;
+    var year = req.body.year;
+    let availableShift=null
+    availableShift=await Shift.findOne({wardID:wardID,month:month,year:year})
+    if(availableShift){
+      return res.status(201).json({
+        msg:'already added',
+        success:false
+      })
+    }else{
     var newShift = Shift(req.body);
-    // await newShift.save(function (err, newShift) {
-    //   if (err) {
-    //     console.error(err);
-    //     return res.status(201).json({ success: false, msg: "Error" });
-    //   }
-    //   console.log(newShift._id + "shift added to the database");
-    //   return res
-    //     .status(200)
-    //     .json({ success: true, msg: "shift added to system successfully" });
-    // });
+    await newShift.save(function (err, newShift) {
+      if (err) {
+        console.error(err);
+        return res
+          .status(201)
+          .json({ success: false, msg: "cannot add to the database" });
+      }
+      console.log(newShift._id + "shift added to the database");
+      return res
+        .status(200)
+        .json({ success: true, msg: "shift added to system successfully" });
+    });}
   }
 };
 module.exports = {

@@ -3,7 +3,7 @@ const Admin= require("../models/admin");
 const Doctor=require("../models/doctor");
 const Consultant=require("../models/consultant");
 const Ward=require("../models/ward");
-
+const NumberOfDoctors=require("../models/numberOfDoctors")
 const express = require("express");
 const app = express();
 
@@ -30,16 +30,36 @@ const addUser = async (req,res)=>{
   }else{
     if(req.body.type==="1"){
 
-      console.log(req.body) //TODO remove me
 
+      console.log(req.body.type);
       var pass=req.body.password;
       const salt=await bcrypt.genSalt(10);
       var encryptedPass=await bcrypt.hash(pass,salt);
       req.body.password=encryptedPass;
+
       req.body.docID="2"
 
+
+      const wardNumber=req.body.wardID;
+      const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
+      const ward_id=(wardDetails[0]._id).toString();
+      req.body.wardID=ward_id;
+      //console.log(wardDetails)
+
+      var mongoose = require('mongoose');
+      var id = mongoose.Types.ObjectId(ward_id);
+      const abc=await NumberOfDoctors.find({wardID:id},null,{limit:1});
+      const next_id=abc[0].number
+      req.body.docID=next_id;
+      const filter = { wardID:id };
+      const update = { number: next_id+1 };
+      let doc = await NumberOfDoctors.findOneAndUpdate(filter, update, {
+        new: true
+      });
+
+      //console.log(doc) //TODO remove me
       var addUserRequestD=new Doctor(req.body);
-      addUserRequestD.save(function(err,addUserRequestD){
+      await addUserRequestD.save(function(err,addUserRequestD){
         if (err){
 
           console.error(err);
@@ -56,6 +76,12 @@ const addUser = async (req,res)=>{
       const salt = await bcrypt.genSalt(10);
       var encryptedPass = await bcrypt.hash(pass, salt);
       req.body.password = encryptedPass;
+
+      const wardNumber=req.body.wardID;
+      const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
+      const ward_id=(wardDetails[0]._id).toString();
+      req.body.wardID=ward_id;
+
       var addUserRequest = new Consultant(req.body);
       addUserRequest.save(function (err, addUserRequest) {
         if (err) {
@@ -66,9 +92,6 @@ const addUser = async (req,res)=>{
         console.log(addUserRequest._id+" added to the database")
         return res.status(200).json({success:true,msg:"User added to system successfully"})
       })
-    }else{
-      return res.status(201).json({success:false,msg:"empty body or type field invalid"})
-
     }
   }
 };
