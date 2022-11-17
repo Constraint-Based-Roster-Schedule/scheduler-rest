@@ -2,6 +2,7 @@ const Doctor = require("../models/doctor");
 const express = require("express");
 const exchangeRequestModel = require("../models/exchangeRequest")
 const rosterSchema=require('../models/rosterSchema');
+const advanceRequests=require('../models/advanceRequest');
 const shifts =require("../models/shifts")
 const mongoose = require("mongoose");
 
@@ -108,18 +109,43 @@ const getData=async(req,res)=>{
 
 
 const submitLeaveRequest=(req,res)=>{
-  if(!req.body){
-    return res.status(201).json({success:false,msg:"can't have an empty body"})
-  }else{
-    console.log(req.body);
-    return res.send(req.body);
-  }
+  const leaves=req.query.leaveRequests;
+  const month=req.query.month;
+  const year=req.query.year;
+  const docID=req.query.docID;
+  const wardID=req.query.wardID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(docID);
+  var ward_id=mongoose.Types.ObjectId(wardID);
+  const saving_data={"doctorNumber":id,"wardNumber":ward_id,"typeID":2,"shiftMonth":month,"shiftYear":year,"shifts":leaves}
+  console.log(saving_data);
+  var request1 = new advanceRequests(saving_data) ;
+  request1.save(function (err, request1) {
+    if (err) return console.error(err);
+    console.log(request1._id + " saved to exchangeRequests collection.");
+    return res.status(200).json({success: true, msg: "added successfully"}) ;
+  });
+  //console.log(leaves)
   
 }
 
 const submitPreferrableSlots=(req,res)=>{
-  console.log(req.body);
-  return res.send(req.body);
+  const leaves=req.query.prefferableSlots;
+  const month=req.query.month;
+  const year=req.query.year;
+  const docID=req.query.docID;
+  const wardID=req.query.wardID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(docID);
+  var ward_id=mongoose.Types.ObjectId(wardID);
+  const saving_data={"doctorNumber":id,"wardNumber":ward_id,"typeID":1,"shiftMonth":month,"shiftYear":year,"shifts":leaves}
+  console.log(saving_data);
+  var request1 = new advanceRequests(saving_data) ;
+  request1.save(function (err, request1) {
+    if (err) return console.error(err);
+    console.log(request1._id + " saved to exchangeRequests collection.");
+    return res.status(200).json({success: true, msg: "added successfully"}) ;
+  });
 }
 
 const getIndividualRoster=async(req,res)=>{
