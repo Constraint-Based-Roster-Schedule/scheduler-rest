@@ -5,8 +5,10 @@ const mongoose = require("mongoose");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
 const Roster = require('../models/rosterSchema') ;
+const AdvanceRequest = require('../models/advanceRequest');
 
 const SchedulerController = require("./schedulerController");
+const advanceRequest = require("../models/advanceRequest");
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
   if (!doctorList) {
@@ -150,10 +152,27 @@ const saveRoster =  async (req, res)=> {
 
 }
 
+const getWardDoctorList = async (wardID)=>{
+  
+  const doctorList = []
+  return doctorList 
+}
+
+const getPrefered = async (wardID, month, year) =>{
+  const preferedRequests = [] 
+  advanceRequest.find({typeID: 1, month: month, wardID: wardID, year: year},'doctorNumber, shifts', (err, docs) =>{
+    docs.forEach(record => {
+      console.log(record.shifts);
+    });
+  })
+  
+  return preferedRequests
+}
 module.exports = {
   getUser,
   getUserDetails,
   getCountOfDoctors,
   generateRoster,
-  saveRoster
+  saveRoster,
+  getWardDoctorList,
 };
