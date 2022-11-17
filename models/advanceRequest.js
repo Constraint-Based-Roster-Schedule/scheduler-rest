@@ -2,32 +2,33 @@ const mongoose = require('mongoose');
 
 const advanceRequestSchema = new mongoose.Schema({
     doctorNumber : {
-        type: Number, 
-       
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     wardNumber : {
-        type : Number, 
-        required : true
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Ward" ,
+        required:true
     }, 
     // 
     typeID : {
         type : Number, 
         required : true
     }, 
-    shift : {
-        type : Number,
-       required:true
+    shifts : {
+        type : Array,
+        default : [[[]]]
     },
-    shiftDay : {
-        type : Number,
-        required : true
-    },
+
     shiftMonth:{
-        type:Number,
+        type:String,
+        required:true
+    },
+    shiftYear:{
+        type:String,
         required:true
     }
-    
     
     
 }, {collection : "advanceRequests"});

@@ -194,9 +194,11 @@ const getWardNumbersNames=async(req,res)=>{
 
 const getDoctorDetails=async(req,res)=>{
   const docID=req.query.docID;
+  console.log(docID)
   const doc_det=await Doctor.find({docID:docID},null,{limit:1});
+  //console.log(doc_det)
   const sending_data=[doc_det[0].firstName,doc_det[0].lastName,doc_det[0].address,doc_det[0].emailaddress,doc_det[0].telephone]
-  //console.log(sending_data);
+  console.log(sending_data);
   return res.status(200).json({"doctorDetails":sending_data});
 }
 
