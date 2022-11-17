@@ -64,16 +64,58 @@ const putNotif = async (req, res, next) => {
 
 }
 const getOutNotif = async(req,res) => {
+  const docID=req.query.docID;
+  const month=req.query.month;
+  const year=req.query.year;
+  const date=req.query.date;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(docID);
+  //console.log(date);
+
+  const rec_notifications=await exchangeRequestModel.find({toID:id,requestState:1,month:month,year:year},null,{});
+  const sending_recNot=[]
+  let tempid=1;
+  for(const notif of rec_notifications){
+    //const int_requestDate=+notif.requestedDate;
+    if(notif.requestedDate>date){
+      if(notif.currentDate>date){
+        var id1 = mongoose.Types.ObjectId(notif.fromID.toString());
+        const doc_det=await Doctor.find({_id:id1},null,{limit:1});
+        sending_recNot.push({"id":notif._id.toString(),"date":notif.currentDate, "workingslot":notif.currentShift,"datewith":notif.requestedDate,"shiftwith":notif.requestedShift,"doctorID":notif.fromID.toString(),"doctorName":doc_det[0].firstName,"state":notif.requestState})
+      }      
+    }
+  }
+  //console.log(sending_recNot);
+
+  return res.status(200).json({"received":sending_recNot});
 
 }
 const hideNotif = async (req,res) => {
 
 }
 const declineRequest = async (req,res) => {
+  console.log("lakA")
+  const not_id=req.query.notifID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(not_id);
 
+  const filter = { _id: id };
+  const update = { requestState: 3 };
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
+  return res.status(200).json({"doc":doc});
 }
-const acceptRequest = async (req,res) => {
 
+
+const acceptRequest = async (req,res) => {
+  console.log("lakA")
+  const not_id=req.query.notifID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(not_id);
+
+  const filter = { _id: id };
+  const update = { requestState: 2 };
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
+  return res.status(200).json({"doc":doc});
 }
 
 
