@@ -1,12 +1,12 @@
 const mongoose = require('mongoose'); 
 
 const advanceRequestSchema = new mongoose.Schema({
-    doctorID : {
+    doctorNumber : {
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Doctor",
         required: true
     },
-    wardID : {
+    wardNumber : {
         type : mongoose.Schema.Types.ObjectId, 
         ref : "Ward",
         required : true
@@ -15,17 +15,18 @@ const advanceRequestSchema = new mongoose.Schema({
         type : Number, 
         required : false
     }, 
-    shift : {
-        day : Number,
-        shiftNum : Number
+    shifts : {
+        type : Array, 
+        default : [] 
     },
-    shiftDay : {
-        type : Number,
+    shiftMonth : {
+        type : String, 
+        required : true
+    }, 
+    shiftYear : {
+        type : String, 
         required : true
     }
-    
-    
-    
 }, {collection : "advanceRequests"});
 
 module.exports = mongoose.model ("advanceRequests", advanceRequestSchema)

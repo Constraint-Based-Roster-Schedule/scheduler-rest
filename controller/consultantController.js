@@ -85,7 +85,39 @@ const getCountOfDoctors = async (req, res) => {
 };
 const generateRoster = async (req, res) => {
   console.log(req.body);
-  const scheduler = new SchedulerController(req.body) ;
+  const wardObjID = mongoose.Types.ObjectId(req.body.wardID)
+  const preferences = await getPrefered(wardObjID, req.body.month, req.body.year) ;
+  const leaves = await getNotPrefered (wardObjID, req.body.month, req.body.year)
+  const doctor_num = req.body.numOfDoctors
+  const shift_num = req.body.shiftNum 
+  const days_num = req.body.numOfDays
+  const doctors_per_shift = req.body.numOfMaximumDoctors 
+  var leave_requests ;
+  var preference_requests ;
+  if (req.body.isPref) {
+    leave_requests = leaves 
+  }else {
+    leave_requests = []
+
+  }
+  if (req.body.isLeave) {
+    preference_requests = preferences 
+  }else {
+    preference_requests = []
+
+  }
+
+  const requestToScheduler = { 
+    doctor_num: doctor_num,
+    shift_num: shift_num,
+    days_num: days_num,
+    doctors_per_shift: doctors_per_shift, 
+    leave_requests: leave_requests,
+    preference_requests: preference_requests
+  }
+  console.log(requestToScheduler);
+
+  const scheduler = new SchedulerController(requestToScheduler) ;
   // TODO: check the body here
   const dataCheck = scheduler.verifyBody() ;
   if (!dataCheck) {
@@ -152,27 +184,85 @@ const saveRoster =  async (req, res)=> {
 
 }
 
-const getWardDoctorList = async (wardID)=>{
-  
-  const doctorList = []
-  return doctorList 
+
+const testPath = async (req, res) => {
+  const wardID = mongoose.Types.ObjectId("6371a53b963e2cb4f2f65a0c")
+  month = "december" 
+  year = "2022"
+
+  const result = await getNotPrefered(wardID,month,year) 
+  console.log(result); 
+
+  return res.status(200).json({
+    success: true }) 
 }
 
 const getPrefered = async (wardID, month, year) =>{
-  const preferedRequests = [] 
-  advanceRequest.find({typeID: 1, month: month, wardID: wardID, year: year},'doctorNumber, shifts', (err, docs) =>{
-    docs.forEach(record => {
-      console.log(record.shifts);
-    });
+  //need to get preferences from the database 
+  var preferedRequests ;
+  const outputList = [] ; 
+
+  //fetches the preferences from the database with matching wardID, and popoulates the doctor stub and selects the docID
+  preferedRequests = await advanceRequest.find({typeID: 1, shiftMonth: month, wardNumber: wardID, shiftYear: year},'doctorNumber shifts')
+  .populate ({
+    path: 'doctorNumber',
+    model: 'Doctor',
+    select : 'docID -_id'
   })
-  
-  return preferedRequests
+
+  //interate and convert 
+
+  preferedRequests.forEach(element => {
+    const doctorID = element.doctorNumber.docID
+    const shiftList = element.shifts 
+    shiftList.forEach(element => {
+      const shiftArray = JSON.parse(element) 
+      shiftArray.unshift(doctorID)
+      outputList.push(shiftArray)
+    });
+   
+
+  });
+  //return preferedRequests
+  return outputList 
 }
+
+const getNotPrefered = async (wardID, month, year) => {
+  //need to get preferences from the database 
+  var notPreferedRequests ;
+  const outputList = [] ; 
+
+  //fetches the preferences from the database with matching wardID, and popoulates the doctor stub and selects the docID
+  notPreferedRequests = await advanceRequest.find({typeID: 2, shiftMonth: month, wardNumber: wardID, shiftYear: year},'doctorNumber shifts')
+  .populate ({
+    path: 'doctorNumber',
+    model: 'Doctor',
+    select : 'docID -_id'
+  })
+
+  //interate and convert 
+
+  notPreferedRequests.forEach(element => {
+    const doctorID = element.doctorNumber.docID
+    const shiftList = element.shifts 
+    shiftList.forEach(element => {
+      const shiftArray = JSON.parse(element) 
+      shiftArray.unshift(doctorID)
+      outputList.push(shiftArray)
+    });
+   
+
+  });
+  //return preferedRequests
+  return outputList 
+}
+
+
 module.exports = {
   getUser,
   getUserDetails,
   getCountOfDoctors,
   generateRoster,
   saveRoster,
-  getWardDoctorList,
+  testPath
 };
