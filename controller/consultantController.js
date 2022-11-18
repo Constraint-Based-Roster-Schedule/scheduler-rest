@@ -4,8 +4,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
+
 const Shift = require("../models/shifts");
 const bcrypt = require("bcrypt");
+
+const Roster = require('../models/rosterSchema') ;
+const SchedulerController = require("./schedulerController");
+const advanceRequest = require("../models/advanceRequest");
+
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
   if (!doctorList) {
@@ -101,25 +107,31 @@ const getShiftPerDay = async (req, res) => {
 };
 const generateRoster = async (req, res) => {
   console.log(req.body);
-  // send the below details
-  // {
-  //   month: '2022-03',
-  //   numOfDoctors: 3,
-  //   numOfMaxNightShifts: '2',
-  //   numOfMaximumDoctors: '2',
-  //   numOfMaximumShifts: '2',
-  //   numOfMinimumDoctors: '2',
-  //   numOfMinimumShifts: '2'
-  // }
-  let roster = null;
+  const scheduler = new SchedulerController(req.body) ;
+  // TODO: check the body here
+  const dataCheck = scheduler.verifyBody() ;
+  if (!dataCheck) {
+    return res.status(500).json({
+      success: false,
+      msg: "body verification failed",
+    });
+  }
+  const genRoster = await scheduler.dispatchAPIRequest() ;
+  console.log(genRoster);
+  
   // assign the roster to here from the algorithem
-  isGenerated = false;
+  if (genRoster.message === "success") {
+    isGenerated = true ;
+  } else {
+    isGenerated = false ;
+  }
+
+  
   if (isGenerated) {
-    roster = { 1: [1, 2, 3], 2: [1, 2, 3] };
     return res.status(200).json({
       success: true,
       msg: "roster generated according to constraints",
-      roster: roster,
+      roster: genRoster.roster
     });
   } else {
     console.log("no roster for given costraints");
@@ -202,6 +214,7 @@ const changePassword = async (req, res) => {
           bcrypt.genSaltSync()
         );
 
+
         try {
           let x = await Consultant.updateOne(
             { emailaddress: email },
@@ -228,12 +241,67 @@ const changePassword = async (req, res) => {
     }
   }
 };
+
+const saveRoster =  async (req, res)=> {
+  // getting the next month and year as strings
+  const nowDate = new Date();
+  const nextMonth = new Date() ;
+  nextMonth.setMonth(nowDate.getMonth() + 1) ;
+  const month = nextMonth.toLocaleString('default', { month: 'long' });
+  const year = nextMonth.getFullYear().toString();
+
+  //check request
+  const requiredFields = ["wardID", "roster"]
+  const recievedKeys = Object.keys(req.body) ;
+  for (const key in requiredFields) {
+    if (!recievedKeys.includes(requiredFields[key])) {
+      return res.status(400).json({success: false, message:"bad request"})
+    }
+  };
+  
+  //check if the roster is already present in the database
+  const isPresent = Roster.exists({month: month, year: year})
+  if (isPresent) {
+    return res.status(400).json({success: false, message: "roster already present"});
+  }
+  //save the roster
+  const wardID = mongoose.Types.ObjectId(req.body.wardID) ;
+  const roster = new Roster({wardID: wardID, month: month, days: req.body.roster, year: year});
+  await roster.save(err => {
+    if (err) return res.status(400).json({success: false, message: "database save failed"})
+  });
+  return res.status(200).json({success: true, message:"roster saved"}) 
+
+}
+
+const getWardDoctorList = async (wardID)=>{
+  
+  const doctorList = []
+  return doctorList 
+}
+
+const getPrefered = async (wardID, month, year) =>{
+  const preferedRequests = [] 
+  advanceRequest.find({typeID: 1, month: month, wardID: wardID, year: year},'doctorNumber, shifts', (err, docs) =>{
+    docs.forEach(record => {
+      console.log(record.shifts);
+    });
+  })
+  
+  return preferedRequests
+}
+
 module.exports = {
   getUser,
   getUserDetails,
   getCountOfDoctors,
   generateRoster,
+
   saveShift,
   getShiftPerDay,
   changePassword,
+
+  saveRoster,
+  getWardDoctorList,
+
 };
