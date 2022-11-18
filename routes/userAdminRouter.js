@@ -15,5 +15,9 @@ router.get("/getDoctorDetails",adminController.getDoctorDetails);
 
 router.post('/addWard',adminController.addWard)
 router.post('/getWardNumbersNames',adminController.getWardNumbersNames)
+
+router.post('/changePassword',adminController.changePassword)
+
 router.post('/getWardID',adminController.getWardID)
+
 module.exports=router;
