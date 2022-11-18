@@ -15,11 +15,12 @@ const shifts = new mongoose.Schema({
         required : true
     },
     shifts : {
-        type : Array,
+        type : Array,       
         required:true
     },
     wardID:{
-        type:Number,
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "Ward" ,
         required:true
     }
 });

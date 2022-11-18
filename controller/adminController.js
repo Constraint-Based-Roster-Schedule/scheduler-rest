@@ -3,7 +3,7 @@ const Admin= require("../models/admin");
 const Doctor=require("../models/doctor");
 const Consultant=require("../models/consultant");
 const Ward=require("../models/ward");
-
+const NumberOfDoctors=require("../models/numberOfDoctors")
 const express = require("express");
 const app = express();
 
@@ -30,16 +30,35 @@ const addUser = async (req,res)=>{
   }else{
     if(req.body.type==="1"){
 
-      console.log(req.body) //TODO remove me
 
+      console.log(req.body.type);
       var pass=req.body.password;
       const salt=await bcrypt.genSalt(10);
       var encryptedPass=await bcrypt.hash(pass,salt);
       req.body.password=encryptedPass;
-      
 
+
+
+      const wardNumber=req.body.wardID;
+      const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
+      const ward_id=(wardDetails[0]._id).toString();
+      req.body.wardID=ward_id;
+      //console.log(wardDetails)
+
+      var mongoose = require('mongoose');
+      var id = mongoose.Types.ObjectId(ward_id);
+      const abc=await NumberOfDoctors.find({wardID:id},null,{limit:1});
+      const next_id=abc[0].number
+      req.body.docID=next_id;
+      const filter = { wardID:id };
+      const update = { number: next_id+1 };
+      let doc = await NumberOfDoctors.findOneAndUpdate(filter, update, {
+        new: true
+      });
+
+      //console.log(doc) //TODO remove me
       var addUserRequestD=new Doctor(req.body);
-      addUserRequestD.save(function(err,addUserRequestD){
+      await addUserRequestD.save(function(err,addUserRequestD){
         if (err){
 
           console.error(err);
@@ -56,6 +75,12 @@ const addUser = async (req,res)=>{
       const salt = await bcrypt.genSalt(10);
       var encryptedPass = await bcrypt.hash(pass, salt);
       req.body.password = encryptedPass;
+
+      const wardNumber=req.body.wardID;
+      const wardDetails=await Ward.find({wardNumber:wardNumber},null,{limit:1});
+      const ward_id=(wardDetails[0]._id).toString();
+      req.body.wardID=ward_id;
+
       var addUserRequest = new Consultant(req.body);
       addUserRequest.save(function (err, addUserRequest) {
         if (err) {
@@ -66,9 +91,6 @@ const addUser = async (req,res)=>{
         console.log(addUserRequest._id+" added to the database")
         return res.status(200).json({success:true,msg:"User added to system successfully"})
       })
-    }else{
-      return res.status(201).json({success:false,msg:"empty body or type field invalid"})
-
     }
   }
 };
@@ -147,7 +169,7 @@ const getWardNumbersNames=async(req,res)=>{
   //   if( err) throw err
   //   console.log(result);
   // })
-  wardDetails= await Ward.find({},{_id:0,wardName:1,wardNumber:1})
+  const wardDetails= await Ward.find({},{_id:0,wardName:1,wardNumber:1})
   if(!wardDetails){
     return res.status(500).json({
       success:false,
@@ -173,9 +195,8 @@ const getWardNumbersNames=async(req,res)=>{
 const getDoctorDetails=async(req,res)=>{
   const docID=req.query.docID;
   const doc_det=await Doctor.find({docID:docID},null,{limit:1});
-  const sending_data=[doc_det[0].firstName,doc_det[0].lastName,doc_det[0].address,doc_det[0].emailaddress,doc_det[0].telephone]
-  //console.log(sending_data);
-  return res.status(200).json({"doctorDetails":sending_data});
+  const sending_data=[doc_det[0].firstName,doc_det[0].lastName,doc_det[0].address,doc_det[0].emailaddress,doc_det[0].telephone,doc_det[0].wardID.toString()]
+  return res.status(200).json({"doctorDetails":sending_data,"docID":docID});
 }
 
 const getAllDoctors=async(req,res)=>{
@@ -185,7 +206,7 @@ const getAllDoctors=async(req,res)=>{
     const doc_detail=[doc.docID,doc.firstName,doc.lastName]
     allDoctors.push(doc_detail)
   }
-  console.log(allDoctors)
+  //console.log(allDoctors)
   return res.status(200).json({"allDoctors":allDoctors});
 }
 
@@ -204,36 +225,35 @@ const getWardDetails=async(req,res)=>{
   const wardID=req.query.wardID;
 
   const ward_det=await Ward.find({wardNumber:wardID},null,{limit:1});
-  //console.log(ward_det)
   const wardName=ward_det[0].wardName;
-  const docIDList=ward_det[0].doctorList;
-  // const consultant_id=ward_det[0].consultantID;
-
-  // const consultant_id_string=consultant_id.toString();
-  // const consultantData_abstract=await Consultant.findById(consultant_id_string).exec();
+  const docObjID=ward_det[0]._id.toString();
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(docObjID);
+  const doc_detail=await Doctor.find({wardID:id},null,{});
+  const consultantData_abstract=await Consultant.find({wardID:id},null,{limit:1});
   
-  const consultant_data=["saman","kumara","skhdiushd","iuefhaw"]
-  // consultant_data.push(consultantData_abstract.firstName)
-  // consultant_data.push(consultantData_abstract.lastName)
-  // consultant_data.push(consultantData_abstract.emailaddress)
-  // consultant_data.push(consultantData_abstract.telephone)
-  // console.log(consultant_data);
+  const consultant_data=[]
+  if(consultantData_abstract.length>0){
+      consultant_data.push(consultantData_abstract[0].firstName)
+      consultant_data.push(consultantData_abstract[0].lastName)
+      consultant_data.push(consultantData_abstract[0].emailaddress)
+      consultant_data.push(consultantData_abstract[0].telephone)
+      //console.log(consultant_data);
+  }
   
   var data=[]
-  for(const d of docIDList){
-    const id_string=d.toString();
-    const result=await Doctor.findById(id_string).exec();
+  for(const d of doc_detail){
     let required_data=[]
-    required_data.push(result.firstName);
-    required_data.push(result.lastName);
-    required_data.push(result.emailaddress);
-    required_data.push(result.telephone);
+    required_data.push(d.firstName);
+    required_data.push(d.lastName);
+    required_data.push(d.emailaddress);
+    required_data.push(d.telephone);
     //console.log(required_data);
     data.push(required_data);         
       
   }
   //console.log(data);
-  return res.status(200).json({"wardName":wardName,"docData":data,"consultantData":consultant_data});
+  return res.status(200).json({"wardName":wardName,"docData":data,"consultantData":consultant_data,"wardObj":docObjID});
 }
 const changePassword = async (req, res) => {
   console.log(req.body);
@@ -295,10 +315,20 @@ const changePassword = async (req, res) => {
   }
 };
 
+const getWardID = async (req, res) =>{
+  const intID=req.query.intID;
+  const ward_det=await Ward.find({wardNumber:intID},null,{limit:1});
+  const wardObjID=ward_det[0]._id.toString();
+  //console.log(wardObjID)
+  return res.status(200).json({"wardObj":wardObjID});
+}
+
 module.exports = {
   getUser,addUser,getUserDetails,getWardDetails,getAvailableWards,getAllDoctors,getDoctorDetails,addWard,
-  getWardNumbersNames,changePassword
 
-   
+  getWardNumbersNames,changePassword,getWardID
+
+
+  
 
 };

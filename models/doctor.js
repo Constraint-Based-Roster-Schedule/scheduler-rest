@@ -38,7 +38,7 @@ const doctorSchema=new mongoose.Schema({
         required:true
     },
     docID:{
-        type:String,
+        type:Number,
         required:true
     }
 },{collection : "doctors"});
