@@ -6,6 +6,7 @@ const Ward=require("../models/ward");
 const NumberOfDoctors=require("../models/numberOfDoctors")
 const express = require("express");
 const app = express();
+var nodemailer = require('nodemailer');
 
 
 const bcrypt = require("bcrypt");
@@ -36,7 +37,8 @@ const addUser = async (req,res)=>{
       const salt=await bcrypt.genSalt(10);
       var encryptedPass=await bcrypt.hash(pass,salt);
       req.body.password=encryptedPass;
-
+      console.log(pass);
+      // console.log(encryptedPass)
 
 
       const wardNumber=req.body.wardID;
@@ -65,6 +67,30 @@ const addUser = async (req,res)=>{
           return res.status(201).json({ success: false, msg: "Error" });
         }
         console.log(addUserRequestD._id + " added to the database");
+
+
+      let transporter = nodemailer.createTransport({
+             host: 'smtp.office365.com',
+             port: 587,
+             secure: false,  
+             auth: {
+                 user: "technestroster2022@outlook.com",
+                 pass: "happyHallibut03"
+             }
+        })
+        message = {
+         from: "technestroster2022@outlook.com",
+         to: req.body.emailaddress,
+         subject: "Registration for Roster Care",
+         text: `You have successfully registered for Roster Care. To log into the system, use ${pass} as the password`
+      }
+    transporter.sendMail(message, function(err, info) {
+         if (err) {
+           console.log(err)
+         } else {
+           console.log(info);
+         }})
+
         return res
           .status(200)
           .json({ success: true, msg: "User added to system successfully" });

@@ -242,7 +242,7 @@ const getIndividualRoster=async(req,res)=>{
 
   const int_month=getMonthFromString(month)-1;
 
-  const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
+  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
   const shiftNames=shiftNames_abstratct[0].shifts;
   //console.log(shiftNames);
 
@@ -296,7 +296,11 @@ const getWardDoctors=async(req,res)=>{
 const getShiftNames=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
-  const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
+  const wardID=req.query.wardID;
+  console.log(wardID)
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
   const shiftNames=shiftNames_abstratct[0].shifts;
   //console.log(shiftNames);
   return res.status(200).json({"shiftNames":shiftNames});
@@ -344,6 +348,17 @@ const getUserDetails = async (req, res) => {
 };
 
 
+const getWardNamebyID=async(req,res)=>{
+  const wardID=req.query.wardID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  const wards=await Ward.find({_id:id},null,{limit:1});
+  const wardName=wards[0].wardNumber;
+  return res.status(200).json({"wardNumber":wardName});
+}
+
+
 module.exports = {
-  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification
+  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification,
+  getWardNamebyID
 };

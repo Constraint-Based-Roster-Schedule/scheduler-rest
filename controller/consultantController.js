@@ -163,6 +163,30 @@ const saveShift = async (req, res) => {
     });}
   }
 };
+
+const getShiftNames=async(req,res)=>{
+  const month=req.query.month;
+  const year=req.query.year;
+  const wardID=req.query.wardID;
+  console.log(wardID)
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  const shiftNames_abstratct=await Shift.find({month:month,year:year,wardID:id},null,{limit:1});
+  const shiftNames=shiftNames_abstratct[0].shifts;
+  //console.log(shiftNames);
+  return res.status(200).json({"shiftNames":shiftNames});
+}
+
+const getWardNamebyID=async(req,res)=>{
+  console.log("awaaa")
+  const wardID=req.query.wardID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  const wards=await Ward.find({_id:id},null,{limit:1});
+  const wardName=wards[0].wardNumber;
+  return res.status(200).json({"wardNumber":wardName});
+}
+
 module.exports = {
   getUser,
   getUserDetails,
@@ -170,4 +194,6 @@ module.exports = {
   generateRoster,
   saveShift,
   getShiftPerDay,
+  getShiftNames,
+  getWardNamebyID
 };
