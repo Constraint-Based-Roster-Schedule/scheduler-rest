@@ -265,18 +265,17 @@ const getAllDoctors=async(req,res)=>{
     const doc_detail=[doc.docID,doc.firstName,doc.lastName]
     allDoctors.push(doc_detail)
   }
-  //console.log(allDoctors)
+
   return res.status(200).json({"allDoctors":allDoctors});
 }
 
 const getAvailableWards=async(req,res)=>{
   const ward_det=await Ward.find();
-  //console.log(ward_det);
   const availableWards=[];
   for(const ward of ward_det){
     availableWards.push(ward.wardNumber);
   }
-  //console.log(availableWards);
+
   return res.status(200).json({"availableWards":availableWards});
 }
 
