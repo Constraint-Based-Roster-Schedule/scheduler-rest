@@ -15,6 +15,11 @@ router.all('/submitLeaveRequest',doctorController.submitLeaveRequest),
 router.all('/submitPrefferableSlots',doctorController.submitPreferrableSlots);
 router.all('/getRosterObject',doctorController.getIndividualRoster);
 router.get('/getShiftNames',doctorController.getShiftNames);
+
+
+router.post('/userDetails',doctorController.getUserDetails)
+router.post('/changePassword',doctorController.changePassword)
+
 router.post('/userDetails',doctorController.getUserDetails);
 router.get('/getWardDoctors',doctorController.getWardDoctors);
 router.get('/closeNotification',doctorController.closeNotification);
