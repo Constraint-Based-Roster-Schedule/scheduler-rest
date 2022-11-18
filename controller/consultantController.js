@@ -56,15 +56,17 @@ const getUserDetails = async (req, res) => {
 };
 // to get number of doctors in the ward
 const getCountOfDoctors = async (req, res) => {
-  // console.log(req.body);
+  console.log(req.body.wardID);
+  let x=req.body.wardID
   console.log("indide the get doctor count method");
-  const wardID = req.body.wardID;
+  const wardID = x;
   let doctors = null;
   let doctorCount = 0;
   doctors = await Doctor.count({ wardID: wardID });
+  console.log('doctor count ',doctors)
   if (doctors == 0) {
     console.log("No doctors for this ward");
-    return res.status(500).json({
+    return res.status(201).json({
       success: false,
       msg: "no doctors found",
       doctorCount: 0,
