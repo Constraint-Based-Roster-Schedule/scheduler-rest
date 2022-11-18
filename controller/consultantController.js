@@ -390,8 +390,5 @@ module.exports = {
   getShiftPerDay,
   changePassword,
   saveRoster,
-  testPath,
-  getWardDoctorList,
-
-
+  testPath
 };
