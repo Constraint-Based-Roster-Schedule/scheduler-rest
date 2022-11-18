@@ -194,12 +194,9 @@ const getWardNumbersNames=async(req,res)=>{
 
 const getDoctorDetails=async(req,res)=>{
   const docID=req.query.docID;
-  console.log(docID)
   const doc_det=await Doctor.find({docID:docID},null,{limit:1});
-  //console.log(doc_det)
-  const sending_data=[doc_det[0].firstName,doc_det[0].lastName,doc_det[0].address,doc_det[0].emailaddress,doc_det[0].telephone]
-  console.log(sending_data);
-  return res.status(200).json({"doctorDetails":sending_data});
+  const sending_data=[doc_det[0].firstName,doc_det[0].lastName,doc_det[0].address,doc_det[0].emailaddress,doc_det[0].telephone,doc_det[0].wardID.toString()]
+  return res.status(200).json({"doctorDetails":sending_data,"docID":docID});
 }
 
 const getAllDoctors=async(req,res)=>{
@@ -209,7 +206,7 @@ const getAllDoctors=async(req,res)=>{
     const doc_detail=[doc.docID,doc.firstName,doc.lastName]
     allDoctors.push(doc_detail)
   }
-  console.log(allDoctors)
+  //console.log(allDoctors)
   return res.status(200).json({"allDoctors":allDoctors});
 }
 
@@ -228,43 +225,50 @@ const getWardDetails=async(req,res)=>{
   const wardID=req.query.wardID;
 
   const ward_det=await Ward.find({wardNumber:wardID},null,{limit:1});
-  //console.log(ward_det)
   const wardName=ward_det[0].wardName;
-  const docIDList=ward_det[0].doctorList;
-  // const consultant_id=ward_det[0].consultantID;
-
-  // const consultant_id_string=consultant_id.toString();
-  // const consultantData_abstract=await Consultant.findById(consultant_id_string).exec();
+  const docObjID=ward_det[0]._id.toString();
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(docObjID);
+  const doc_detail=await Doctor.find({wardID:id},null,{});
+  const consultantData_abstract=await Consultant.find({wardID:id},null,{limit:1});
   
-  const consultant_data=["saman","kumara","skhdiushd","iuefhaw"]
-  // consultant_data.push(consultantData_abstract.firstName)
-  // consultant_data.push(consultantData_abstract.lastName)
-  // consultant_data.push(consultantData_abstract.emailaddress)
-  // consultant_data.push(consultantData_abstract.telephone)
-  // console.log(consultant_data);
+  const consultant_data=[]
+  if(consultantData_abstract.length>0){
+      consultant_data.push(consultantData_abstract[0].firstName)
+      consultant_data.push(consultantData_abstract[0].lastName)
+      consultant_data.push(consultantData_abstract[0].emailaddress)
+      consultant_data.push(consultantData_abstract[0].telephone)
+      //console.log(consultant_data);
+  }
   
   var data=[]
-  for(const d of docIDList){
-    const id_string=d.toString();
-    const result=await Doctor.findById(id_string).exec();
+  for(const d of doc_detail){
     let required_data=[]
-    required_data.push(result.firstName);
-    required_data.push(result.lastName);
-    required_data.push(result.emailaddress);
-    required_data.push(result.telephone);
+    required_data.push(d.firstName);
+    required_data.push(d.lastName);
+    required_data.push(d.emailaddress);
+    required_data.push(d.telephone);
     //console.log(required_data);
     data.push(required_data);         
       
   }
   //console.log(data);
-  return res.status(200).json({"wardName":wardName,"docData":data,"consultantData":consultant_data});
+  return res.status(200).json({"wardName":wardName,"docData":data,"consultantData":consultant_data,"wardObj":docObjID});
 }
 
 
+const getWardID = async (req, res) =>{
+  const intID=req.query.intID;
+  const ward_det=await Ward.find({wardNumber:intID},null,{limit:1});
+  const wardObjID=ward_det[0]._id.toString();
+  //console.log(wardObjID)
+  return res.status(200).json({"wardObj":wardObjID});
+}
+
 module.exports = {
   getUser,addUser,getUserDetails,getWardDetails,getAvailableWards,getAllDoctors,getDoctorDetails,addWard,
-  getWardNumbersNames
+  getWardNumbersNames,getWardID
 
-   
+  
 
 };

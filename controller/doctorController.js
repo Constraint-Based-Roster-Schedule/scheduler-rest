@@ -64,16 +64,92 @@ const putNotif = async (req, res, next) => {
 
 }
 const getOutNotif = async(req,res) => {
+  const docID=req.query.docID;
+  const month=req.query.month;
+  const year=req.query.year;
+  const date=req.query.date;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(docID);
+  //console.log(date);
+
+  const rec_notifications=await exchangeRequestModel.find({toID:id,requestState:1,month:month,year:year},null,{});
+  const sending_recNot=[]
+  for(const notif of rec_notifications){
+    //const int_requestDate=+notif.requestedDate;
+    if(notif.requestedDate>date){
+      if(notif.currentDate>date){
+        var id1 = mongoose.Types.ObjectId(notif.fromID.toString());
+        const doc_det=await Doctor.find({_id:id1},null,{limit:1});
+        sending_recNot.push({"id":notif._id.toString(),"date":notif.currentDate, "workingslot":notif.currentShift,"datewith":notif.requestedDate,"shiftwith":notif.requestedShift,"doctorID":notif.fromID.toString(),"doctorName":doc_det[0].firstName,"state":notif.requestState})
+      }      
+    }
+  }
+  //console.log(sending_recNot);
+
+  const accepted_notifications=await exchangeRequestModel.find({fromID:id,requestState:2,month:month,year:year},null,{});
+  const sentNotifications=[];
+  for(const notif of accepted_notifications){
+    //const int_requestDate=+notif.requestedDate;
+    if(notif.requestedDate>date){
+      if(notif.currentDate>date){
+        var id1 = mongoose.Types.ObjectId(notif.toID.toString());
+        const doc_det=await Doctor.find({_id:id1},null,{limit:1});
+        sentNotifications.push({"id":notif._id.toString(),"date":notif.currentDate, "workingslot":notif.currentShift,"datewith":notif.requestedDate,"shiftwith":notif.requestedShift,"doctorID":notif.toID.toString(),"doctorName":doc_det[0].firstName,"state":notif.requestState})
+      }      
+    }
+  }
+
+  const declined_notifications=await exchangeRequestModel.find({fromID:id,requestState:3,month:month,year:year},null,{});
+  for(const notif of declined_notifications){
+    //const int_requestDate=+notif.requestedDate;
+    if(notif.requestedDate>date){
+      if(notif.currentDate>date){
+        var id1 = mongoose.Types.ObjectId(notif.toID.toString());
+        const doc_det=await Doctor.find({_id:id1},null,{limit:1});
+        sentNotifications.push({"id":notif._id.toString(),"date":notif.currentDate, "workingslot":notif.currentShift,"datewith":notif.requestedDate,"shiftwith":notif.requestedShift,"doctorID":notif.toID.toString(),"doctorName":doc_det[0].firstName,"state":notif.requestState})
+      }      
+    }
+  }
+  //console.log(sentNotifications);
+
+  return res.status(200).json({"received":sending_recNot,"sent":sentNotifications});
 
 }
 const hideNotif = async (req,res) => {
 
 }
 const declineRequest = async (req,res) => {
+  const not_id=req.query.notifID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(not_id);
 
+  const filter = { _id: id };
+  const update = { requestState: 3 };
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
+  return res.status(200).json({success: true, msg: "added successfully"}) ;
 }
-const acceptRequest = async (req,res) => {
 
+
+const acceptRequest = async (req,res) => {
+  const not_id=req.query.notifID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(not_id);
+
+  const filter = { _id: id };
+  const update = { requestState: 2 };
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
+  return res.status(200).json({success: true, msg: "added successfully"}) ;
+}
+
+const closeNotification=async(req,res)=>{
+  const not_id=req.query.notifID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(not_id);
+
+  const filter = { _id: id };
+  const update = { requestState: 4 };
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
+  return res.status(200).json({success: true, msg: "added successfully"}) ;
 }
 
 
@@ -153,12 +229,13 @@ const getIndividualRoster=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const months=req.query.months;
+  const wardID=req.query.wardID;
   // const wardID=req.query.wardID;
   // const wardId_string=wardID.toString()
   // const myID=req.query.myID
   //console.log(months);
-  // var mongoose = require('mongoose');
-  // var id = mongoose.Types.ObjectId(wardId_string);
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
   function getMonthFromString(mon){
    return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
   }
@@ -171,14 +248,27 @@ const getIndividualRoster=async(req,res)=>{
 
   
   const myShifts_abstract=[]
-  const myShifts_abstract0=await rosterSchema.find({month:months[0]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract0[0].days)
-  const myShifts_abstract1=await rosterSchema.find({month:months[1]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract1[0].days)
-  const myShifts_abstract2=await rosterSchema.find({month:months[2]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract2[0].days)
-  const myShifts_abstract3=await rosterSchema.find({month:months[3]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract3[0].days)
+
+  const myShifts_abstract0=await rosterSchema.find({month:months[0],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract0[0].days)
+  }
+
+  const myShifts_abstract1=await rosterSchema.find({month:months[1],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract1[0].days)
+  }
+
+  const myShifts_abstract2=await rosterSchema.find({month:months[2],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract2[0].days)
+  }
+
+  const myShifts_abstract3=await rosterSchema.find({month:months[3],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract3[0].days)
+  }
+
   
   //const myShifts=myShifts_abstract[0].days;
   //console.log(myShifts_abstract);
@@ -255,5 +345,5 @@ const getUserDetails = async (req, res) => {
 
 
 module.exports = {
-  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors
+  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification
 };
