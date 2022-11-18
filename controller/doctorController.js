@@ -48,8 +48,7 @@ const putNotif = async (req, res, next) => {
   if (!req.body) {
     return res.status(201).json({success: false, msg: "can't have empty body"}) ;
   } else {
-    // var fromID="633b8d8c6519cbf196d8e5a1";
-    // req.body.fromID=fromID;
+    console.log(req.query)
     var request1 = new exchangeRequestModel(req.body) ;
 
     request1.save(function (err, request1) {
@@ -193,6 +192,7 @@ const submitLeaveRequest=(req,res)=>{
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(docID);
   var ward_id=mongoose.Types.ObjectId(wardID);
+  console.log(leaves)
   const saving_data={"doctorNumber":id,"wardNumber":ward_id,"typeID":2,"shiftMonth":month,"shiftYear":year,"shifts":leaves}
   console.log(saving_data);
   var request1 = new advanceRequests(saving_data) ;
