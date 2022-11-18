@@ -229,12 +229,13 @@ const getIndividualRoster=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const months=req.query.months;
+  const wardID=req.query.wardID;
   // const wardID=req.query.wardID;
   // const wardId_string=wardID.toString()
   // const myID=req.query.myID
   //console.log(months);
-  // var mongoose = require('mongoose');
-  // var id = mongoose.Types.ObjectId(wardId_string);
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
   function getMonthFromString(mon){
    return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
   }
@@ -247,14 +248,27 @@ const getIndividualRoster=async(req,res)=>{
 
   
   const myShifts_abstract=[]
-  const myShifts_abstract0=await rosterSchema.find({month:months[0]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract0[0].days)
-  const myShifts_abstract1=await rosterSchema.find({month:months[1]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract1[0].days)
-  const myShifts_abstract2=await rosterSchema.find({month:months[2]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract2[0].days)
-  const myShifts_abstract3=await rosterSchema.find({month:months[3]},null,{limit:1});
-  myShifts_abstract.push(myShifts_abstract3[0].days)
+
+  const myShifts_abstract0=await rosterSchema.find({month:months[0],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract0[0].days)
+  }
+
+  const myShifts_abstract1=await rosterSchema.find({month:months[1],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract1[0].days)
+  }
+
+  const myShifts_abstract2=await rosterSchema.find({month:months[2],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract2[0].days)
+  }
+
+  const myShifts_abstract3=await rosterSchema.find({month:months[3],year:year,wardID:id},null,{limit:1});
+  if(myShifts_abstract0.length>0){
+    myShifts_abstract.push(myShifts_abstract3[0].days)
+  }
+
   
   //const myShifts=myShifts_abstract[0].days;
   //console.log(myShifts_abstract);
