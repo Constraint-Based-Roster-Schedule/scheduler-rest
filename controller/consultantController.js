@@ -235,6 +235,25 @@ const changePassword = async (req, res) => {
     }
   }
 };
+const getPreferedLeaved = async (wardID, month, year) =>{
+  const preferedRequests = [] 
+  const leaveRequests = [] 
+  advanceRequest.find({typeID: 1, month: month, wardID: wardID, year: year},'doctorNumber, shifts', (err, docs) =>{
+    docs.forEach(record => {
+      console.log(record.shifts);
+      preferedRequests.push([record.doctorNumber,record.shifts])
+    });
+  })
+  advanceRequest.find({typeID: 2, month: month, wardID: wardID, year: year},'doctorNumber, shifts', (err, docs) =>{
+    docs.forEach(record => {
+      console.log(record.shifts);
+      leaveRequests.push([record.doctorNumber,record.shifts])
+    });
+  })
+  console.log(preferedRequests,leaveRequests)
+  return preferedRequests
+}
+
 module.exports = {
   getUser,
   getUserDetails,
@@ -243,4 +262,5 @@ module.exports = {
   saveShift,
   getShiftPerDay,
   changePassword,
+  getPreferedLeaved
 };
