@@ -9,4 +9,5 @@ router.post('/doctorsCount',consultantController.getCountOfDoctors)
 router.post('/generateRoster',consultantController.generateRoster)
 router.post('/getShiftCount',consultantController.getShiftPerDay)
 router.post('/addShift',consultantController.saveShift)
+router.post('/changePassword',consultantController.changePassword)
 module.exports=router;
