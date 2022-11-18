@@ -29,7 +29,7 @@ const login = async (req, res) => {
         //create token
         const token = JWT.sign(
 
-          { userName: emailAddress, userType: type, userID: user._id}, //attributes that we want to get in frontend
+          { userName: emailAddress, userType: type, userID: user._id,userFirstName:user.firstName,userLastName:user.lastName,intId:user.docID,wardID:user.wardID}, //attributes that we want to get in frontend
 
           process.env.ACCESS_TOKEN_SECRET, //secreat key
           {
@@ -61,7 +61,7 @@ const login = async (req, res) => {
       //console.log(isAuth);
       if (isAuth) {
         const token = JWT.sign(
-          { userName: emailAddress, userType: type, userID: user._id }, //
+          { userName: emailAddress, userType: type, userID: user._id ,userFirstName:user.firstName,userLastName:user.lastName,wardId:user.wardID}, //
           process.env.ACCESS_TOKEN_SECRET, //secreat key
           {
             expiresIn: "2h", //

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const advanceRequestSchema = new mongoose.Schema({
     doctorNumber : {
+
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Doctor",
         required: true
@@ -10,10 +11,12 @@ const advanceRequestSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId, 
         ref : "Ward",
         required : true
+
     }, 
+    // 
     typeID : {
         type : Number, 
-        required : false
+        required : true
     }, 
     shifts : {
         type : Array, 
@@ -27,6 +30,7 @@ const advanceRequestSchema = new mongoose.Schema({
         type : String, 
         required : true
     }
+
 }, {collection : "advanceRequests"});
 
 module.exports = mongoose.model ("advanceRequests", advanceRequestSchema)

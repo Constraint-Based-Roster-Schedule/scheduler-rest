@@ -12,7 +12,7 @@ const exchangeRequestSchema = new mongoose.Schema({
     required: true
   },
   currentDate: {
-    type: String, 
+    type: Number, 
     required: true
   },
   currentShift: {
@@ -20,7 +20,7 @@ const exchangeRequestSchema = new mongoose.Schema({
     required: true
   },
   requestedDate: {
-    type: String, 
+    type: Number, 
     required: true
   },
   requestedShift : {
@@ -30,7 +30,15 @@ const exchangeRequestSchema = new mongoose.Schema({
   requestState: {
     type: Number,
     required: true
-  }
+  },
+  month: {
+    type: String, 
+    required: true
+  },
+  year: {
+    type: String, 
+    required: true
+  },
 }, {
   collection : "exchangeRequests"
 });
