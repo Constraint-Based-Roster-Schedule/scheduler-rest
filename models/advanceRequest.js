@@ -18,7 +18,7 @@ const advanceRequestSchema = new mongoose.Schema({
     }, 
     shifts : {
         type : Array,
-        default : [[[]]]
+        default : [[]]
     },
 
     shiftMonth:{
