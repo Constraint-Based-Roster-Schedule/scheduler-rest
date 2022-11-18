@@ -3,7 +3,7 @@ const Admin= require("../models/admin");
 const Doctor=require("../models/doctor");
 const Consultant=require("../models/consultant");
 const Ward=require("../models/ward");
-
+const NumberOfDoctors=require('../models/numberOfDoctors')
 const express = require("express");
 const app = express();
 
@@ -12,6 +12,7 @@ const bcrypt = require("bcrypt");
 
 const mongoose = require("mongoose");
 const { findOneAndDelete } = require("../models/doctor");
+const numberOfDoctors = require("../models/numberOfDoctors");
 
 const getUser = async (req, res) => {
   const adminList = await Admin.find();
@@ -129,15 +130,29 @@ const addWard = async (req, res) => {
   else{
     console.log(req.body);
     var addWard = new Ward(req.body);
-      addWard.save(function (err, addWard) {
+    await  addWard.save(function (err, addWard) {
         if (err) {
           console.error(err);
           return res.status(201).json({ success: false, msg: "Error" });
         }
-        console.log(addWard._id + " added to the database");
-        return res
+        else
+        {console.log(addWard._id + " added to the database");
+        var wardAndDoctors=new numberOfDoctors({wardID:addWard._id,number:req.body.doctorCount});
+        wardAndDoctors.save(function(err,wardAndDoctors){
+          if(err){
+            console.log('error when adding to number o doctor')
+          }
+          else{
+            return res
           .status(200)
           .json({ success: true, msg: "User added to system successfully" });
+          }
+        })
+
+        // return res
+        //   .status(200)
+        //   .json({ success: true, msg: "User added to system successfully" })
+        ;}
       });
   }
 };

@@ -138,7 +138,7 @@ const saveShift = async (req, res) => {
     });
   } else {
     console.log(req.body);
-    var wardID = req.body.wardID;
+    var wardID =mongoose.Types.ObjectId(req.body.wardID);
     var month = req.body.month;
     var year = req.body.year;
     let availableShift = null;
@@ -153,7 +153,12 @@ const saveShift = async (req, res) => {
         success: false,
       });
     } else {
-      var newShift = Shift(req.body);
+      var newShift = Shift({
+        wardID:wardID,
+        month:month,
+        year:year,
+        shifts:req.body.shifts
+      });
       await newShift.save(function (err, newShift) {
         if (err) {
           console.error(err);

@@ -19,8 +19,9 @@ const shifts = new mongoose.Schema({
         required:true
     },
     wardID:{
-        type:Number,
-        required:true
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref:'Ward'
     }
 });
 
