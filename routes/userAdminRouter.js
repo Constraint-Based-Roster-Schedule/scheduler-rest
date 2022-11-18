@@ -16,8 +16,13 @@ router.get("/getDoctorDetails",adminController.getDoctorDetails);
 router.post('/addWard',adminController.addWard)
 router.post('/getWardNumbersNames',adminController.getWardNumbersNames)
 
+router.post('/getWardID',adminController.getWardID);
+router.get('/getTakenEmails',adminController.getTakenEmails);
+
+
 router.post('/changePassword',adminController.changePassword)
 
-router.post('/getWardID',adminController.getWardID)
+
+
 
 module.exports=router;

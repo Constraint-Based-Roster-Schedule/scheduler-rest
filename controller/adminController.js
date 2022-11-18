@@ -71,7 +71,7 @@ const addUser = async (req,res)=>{
           .json({ success: true, msg: "User added to system successfully" });
       });
     }
-    if (req.body.type === "2") {
+    else if (req.body.type === "2") {
       var pass = req.body.password;
       const salt = await bcrypt.genSalt(10);
       var encryptedPass = await bcrypt.hash(pass, salt);
@@ -92,9 +92,27 @@ const addUser = async (req,res)=>{
         console.log(addUserRequest._id+" added to the database")
         return res.status(200).json({success:true,msg:"User added to system successfully"})
       })
+    }else{
+      return res.status(200).json({success:false,msg:"Some error occured while adding user to the account"})
     }
   }
 };
+
+const getTakenEmails=async(req,res)=>{
+  const doctors = await Doctor.find();
+  const doctorEmails=[]
+  for(const doc of doctors){
+    doctorEmails.push(doc.emailaddress);
+  }
+  const consultants = await Consultant.find();
+  const consEmails=[]
+  for(const doc of consultants){
+    consEmails.push(doc.emailaddress);
+  }
+  //console.log(doctorEmails)
+  //console.log(doctorEmails)
+  return res.status(200).json({"doctorEmails":doctorEmails,"constEmails":consEmails})
+}
 
 const getProfileDetails = async (req, res) => {
   if (!req.body) {
@@ -341,7 +359,11 @@ const getWardID = async (req, res) =>{
 module.exports = {
   getUser,addUser,getUserDetails,getWardDetails,getAvailableWards,getAllDoctors,getDoctorDetails,addWard,
 
-  getWardNumbersNames,changePassword,getWardID
+  getWardNumbersNames,getWardID,getTakenEmails,changePassword
+
+
+  
+
 
 
   
