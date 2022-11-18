@@ -9,7 +9,7 @@ const http = require('http');
 const url = require('url');
 const { response } = require("express");
 const { start } = require("repl");
-
+const bcrypt = require("bcrypt");
 
 const Ward=require('../models/ward')
 
@@ -199,8 +199,66 @@ const getUserDetails = async (req, res) => {
   }
 
 };
+const changePassword = async (req, res) => {
+  console.log(req.body);
+  if (!req.body) {
+    return res.status(201).json({
+      msg: "empty bodyy send froom the front end",
+      success: false,
+    });
+  } else if (req.body) {
+    const email = req.body.email;
+    const currenrPassword = req.body.currentPassword;
+    const newPassword = req.body.newPassword;
+    let doctor = await Doctor.findOne(
+      { emailaddress: email },
+      { password: 1 }
+    );
+    console.log(doctor)
+    if (!doctor) {
+      return res.status(200).json({
+        msg: "Current Password does not match",
+        success: false,
+      });
+    } else {
+      console.log(currenrPassword);
+      var isMatch = await bcrypt.compare(currenrPassword, doctor.password);
+      if (isMatch) {
+        const salt = await bcrypt.genSalt(10);
+        // now we set user password to hashed password
+        let password1 = await bcrypt.hash("harshani@", salt);
+        const hashedPassword = bcrypt.hashSync(
+          newPassword,
+          bcrypt.genSaltSync()
+        );
 
+        try {
+          let x = await Doctor.updateOne(
+            { emailaddress: email },
+            { $set: { password: hashedPassword } }
+          );
+          console.log("update password");
+          return res.status(200).json({
+            msg: "changed password successfully :)",
+            success: true,
+          });
+        } catch {
+          return res.status(200).json({
+            msg: "Cant change the password.",
+            success: false,
+          });
+        }
+      } else {
+        console.log("dddddddd");
+        return res.status(200).json({
+          msg: "You Current password is not match :(",
+          success: false,
+        });
+      }
+    }
+  }
+};
 
 module.exports = {
-  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails
+  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,changePassword
 };

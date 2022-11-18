@@ -235,11 +235,69 @@ const getWardDetails=async(req,res)=>{
   //console.log(data);
   return res.status(200).json({"wardName":wardName,"docData":data,"consultantData":consultant_data});
 }
+const changePassword = async (req, res) => {
+  console.log(req.body);
+  if (!req.body) {
+    return res.status(201).json({
+      msg: "empty bodyy send froom the front end",
+      success: false,
+    });
+  } else if (req.body) {
+    const email = req.body.email;
+    const currenrPassword = req.body.currentPassword;
+    const newPassword = req.body.newPassword;
+    let admin = await Admin.findOne(
+      { emailaddress: email },
+      { password: 1 }
+    );
 
+    if (!admin) {
+      return res.status(200).json({
+        msg: "Current Password does not match",
+        success: false,
+      });
+    } else {
+      console.log(currenrPassword);
+      var isMatch = await bcrypt.compare(currenrPassword, admin.password);
+      if (isMatch) {
+      
+        // now we set user password to hashed password
+       
+        const hashedPassword = bcrypt.hashSync(
+          newPassword,
+          bcrypt.genSaltSync()
+        );
+
+        try {
+          let x = await Admin.updateOne(
+            { emailaddress: email },
+            { $set: { password: hashedPassword } }
+          );
+          console.log("update password");
+          return res.status(200).json({
+            msg: "changed password successfully :)",
+            success: true,
+          });
+        } catch {
+          return res.status(200).json({
+            msg: "Cant change the password.",
+            success: false,
+          });
+        }
+      } else {
+        console.log("dddddddd");
+        return res.status(200).json({
+          msg: "You Current password is not match :(",
+          success: false,
+        });
+      }
+    }
+  }
+};
 
 module.exports = {
   getUser,addUser,getUserDetails,getWardDetails,getAvailableWards,getAllDoctors,getDoctorDetails,addWard,
-  getWardNumbersNames
+  getWardNumbersNames,changePassword
 
    
 

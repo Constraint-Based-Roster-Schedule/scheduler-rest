@@ -21,5 +21,5 @@ router.get('/getShiftNames',doctorController.getShiftNames);
 
 
 router.post('/userDetails',doctorController.getUserDetails)
-
+router.post('/changePassword',doctorController.changePassword)
 module.exports=router;
