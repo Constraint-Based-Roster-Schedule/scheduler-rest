@@ -23,7 +23,7 @@ const getUser = async (req, res) => {
   res.send(doctorList);
 };
 const getUserDetails = async (req, res) => {
-  const userName = req.userID;
+  const userName = req.body.userName;
   const userType = req.body.type;
   console.log(req.body);
   const a = null;
@@ -33,7 +33,7 @@ const getUserDetails = async (req, res) => {
 
   // get consultant details
   if (userType === "2") {
-    userDetails = await Consultant.findOne({ id: userName });
+    userDetails = await Consultant.findOne({ emailaddress: userName });
     if (!userDetails) {
       console.log("consultant not found");
       return res.status(500).json({
@@ -42,7 +42,7 @@ const getUserDetails = async (req, res) => {
       });
     } else {
       console.log(userDetails);
-      wardDetails = await Ward.findOne({ id: userDetails.wardID });
+      wardDetails = await Ward.findOne({ _id: userDetails.wardID });
       console.log(wardDetails.wardName);
       return res.status(200).json({
         success: true,

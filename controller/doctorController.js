@@ -368,8 +368,8 @@ const getShiftNames=async(req,res)=>{
 }
 
 const getUserDetails = async (req, res) => {
-  const userId = req.userID;
-  console.log(userId);
+  const userId = req.body.userName;
+  console.log('user id',userId);
   const userType = req.body.type;
   console.log(req.body);
 
@@ -378,7 +378,8 @@ const getUserDetails = async (req, res) => {
  
 
   if (userType === "1") {
-    userDetails = await Doctor.findOne({ id: userId });
+    console.log('doctor')
+    userDetails = await Doctor.findOne({ emailaddress: userId });
     if (!userDetails) {
       console.log("doctor not found");
       return res.status(500).json({
@@ -387,7 +388,7 @@ const getUserDetails = async (req, res) => {
       });
     } else {
       console.log(userDetails);
-      wardDetails = await Ward.findOne({ id: userDetails.wardID });
+      wardDetails = await Ward.findOne({ _id: userDetails.wardID });
       console.log(wardDetails);
       console.log(wardDetails.wardNumber);
       return res.status(200).json({

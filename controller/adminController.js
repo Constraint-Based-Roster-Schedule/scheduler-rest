@@ -147,7 +147,7 @@ const getProfileDetails = async (req, res) => {
 };
 
 const getUserDetails = async (req, res) => {
-  const userName = req.userID;
+  const userName = req.body.userName;
   const userType = req.body.type;
   console.log(req.body);
   const a = null;
@@ -157,7 +157,7 @@ const getUserDetails = async (req, res) => {
 
   // get admin details
   if (userType === "3") {
-    userDetails = await Admin.findOne({ id: userName });
+    userDetails = await Admin.findOne({ emailaddress:userName });
     if (!userDetails) {
       console.log("consultant not found");
       return res.status(500).json({
