@@ -6,6 +6,7 @@ const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
 const Shift = require("../models/shifts");
 const bcrypt = require("bcrypt");
+const ward = require("../models/ward");
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
   if (!doctorList) {
@@ -253,7 +254,19 @@ const getPreferedLeaved = async (wardID, month, year) =>{
   console.log(preferedRequests,leaveRequests)
   return preferedRequests
 }
-
+const getShiftNames = async (req, res) => {
+  const month = req.body.month;
+  const year = req.body.year;
+  const wardID=req.body.wardID;
+  const shiftNames_abstratct = await shifts.find(
+    { month: month, year: year ,wardID:wardID},
+    null,
+    { limit: 1 }
+  );
+  const shiftNames = shiftNames_abstratct[0].shifts;
+  //console.log(shiftNames);
+  return res.status(200).json({ shiftNames: shiftNames });
+};
 module.exports = {
   getUser,
   getUserDetails,
@@ -262,5 +275,6 @@ module.exports = {
   saveShift,
   getShiftPerDay,
   changePassword,
-  getPreferedLeaved
+  getPreferedLeaved,
+  getShiftNames
 };
