@@ -166,7 +166,7 @@ const getUserDetails = async (req, res) => {
       });
     } else {
       
-      wardDetails = await Ward.findOne({ id: userDetails.wardID });
+      // wardDetails = await Ward.findOne({ id: userDetails.wardID });
       
       return res.status(200).json({
         success: true,
@@ -176,8 +176,8 @@ const getUserDetails = async (req, res) => {
         address: userDetails.address,
         telephone: userDetails.telephone,
         emailaddress: userDetails.emailaddress,
-        wardName: wardDetails.wardName,
-        wardId: wardDetails.wardNumber,
+        // wardName: wardDetails.wardName,
+        // wardId: wardDetails.wardNumber,
         userName: userDetails.userName,
         speciality: userDetails.speciality,
       });
