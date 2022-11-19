@@ -14,6 +14,6 @@ router.post('/changePassword',consultantController.changePassword)
 
 router.post('/saveRoster',consultantController.saveRoster)
 router.post('/testPath', consultantController.testPath) //TODO: remove this
-
+router.post('/shiftNames',consultantController.getShiftNames)
 
 module.exports=router;
