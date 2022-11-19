@@ -20,6 +20,10 @@ const doctorSchema=new mongoose.Schema({
         ref : "Ward" ,
         required:true
     },
+    docID:{
+        type : Number, 
+        required:true
+    },
     address:{
         type: String,
         required:true,

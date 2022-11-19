@@ -477,6 +477,6 @@ const getWardNamebyID=async(req,res)=>{
 module.exports = {
 
   getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification,
-  getWardNamebyID,changePassword
+  getWardNamebyID,changePassword, getWardDoctors,closeNotification
 }
 
