@@ -263,13 +263,33 @@ const getIndividualRoster = async (req, res) => {
   }
 
   const int_month = getMonthFromString(month) - 1;
+  const finalShiftNames=[]
 
+  const shiftNames_abstratct0=await shifts.find({month:months[0],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct0.length>0){
+    const shiftNames=shiftNames_abstratct0[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }
 
-  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
-  const shiftNames=shiftNames_abstratct[0].shifts;
+  const shiftNames_abstratct1=await shifts.find({month:months[1],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct1.length>0){
+    const shiftNames=shiftNames_abstratct1[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }
 
+  const shiftNames_abstratct2=await shifts.find({month:months[2],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct2.length>0){
+    const shiftNames=shiftNames_abstratct2[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }
 
-  //console.log(shiftNames);
+  const shiftNames_abstratct3=await shifts.find({month:months[3],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct3.length>0){
+    const shiftNames=shiftNames_abstratct3[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }
+
+  console.log(finalShiftNames);
 
   const myShifts_abstract = [];
 
@@ -287,7 +307,7 @@ const getIndividualRoster = async (req, res) => {
     null,
     { limit: 1 }
   );
-  if (myShifts_abstract0.length > 0) {
+  if (myShifts_abstract1.length > 0) {
     myShifts_abstract.push(myShifts_abstract1[0].days);
   }
 
@@ -296,7 +316,7 @@ const getIndividualRoster = async (req, res) => {
     null,
     { limit: 1 }
   );
-  if (myShifts_abstract0.length > 0) {
+  if (myShifts_abstract2.length > 0) {
     myShifts_abstract.push(myShifts_abstract2[0].days);
   }
 
@@ -305,16 +325,17 @@ const getIndividualRoster = async (req, res) => {
     null,
     { limit: 1 }
   );
-  if (myShifts_abstract0.length > 0) {
+  if (myShifts_abstract3.length > 0) {
     myShifts_abstract.push(myShifts_abstract3[0].days);
   }
 
   //const myShifts=myShifts_abstract[0].days;
   //console.log(myShifts_abstract);
   // console.log(myShifts);
+  //console.log(shiftNames)
   return res
     .status(200)
-    .json({ shiftNames: shiftNames, myShifts: myShifts_abstract });
+    .json({ shiftNames: finalShiftNames, myShifts: myShifts_abstract });
 };
 
 const getWardDoctors=async(req,res)=>{
@@ -456,6 +477,6 @@ const getWardNamebyID=async(req,res)=>{
 module.exports = {
 
   getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification,
-  getWardNamebyID,changePassword
+  getWardNamebyID,changePassword, getWardDoctors,closeNotification
 }
 
