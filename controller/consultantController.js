@@ -121,7 +121,7 @@ const generateRoster = async (req, res) => {
   const shift_num = req.body.shiftNum;
   const days_num = req.body.numOfDays;
   const doctors_per_shift = req.body.numOfMaximumDoctors;
-  const max_shifts = req.body.numOfMaximumShifts
+  const max_shifts = req.body.numOfMaximumShifts;
   var leave_requests;
   var preference_requests;
   if (req.body.isPref) {
@@ -143,7 +143,6 @@ const generateRoster = async (req, res) => {
     leave_requests: leave_requests,
     preference_requests: preference_requests,
     max_shifts: max_shifts,
-
   };
   console.log(requestToScheduler);
 
@@ -325,33 +324,38 @@ const saveRoster = async (req, res) => {
   const nowDate = new Date();
   const nextMonth = new Date();
   nextMonth.setMonth(nowDate.getMonth() + 1);
-  const month = nextMonth.toLocaleString("default", { month: "long" });
+  const month = (nextMonth.toLocaleString("default", { month: "long" })).toLowerCase();
   const year = nextMonth.getFullYear().toString();
-
+  console.log(req.body);
   //check request
   const requiredFields = ["wardID", "roster"];
   const recievedKeys = Object.keys(req.body);
   for (const key in requiredFields) {
+    console.log(recievedKeys);
     if (!recievedKeys.includes(requiredFields[key])) {
+      console.log("yessss");
       return res.status(400).json({ success: false, message: "bad request" });
     }
   }
 
   //check if the roster is already present in the database
-  const isPresent = Roster.exists({ month: month, year: year });
+  const wardID = mongoose.Types.ObjectId(req.body.wardID);
+  const isPresent =await Roster.exists({ wardID: wardID, month: month, year: year });
+  console.log({ month: month, year: year });
   if (isPresent) {
     return res
-      .status(400)
+      .status(200)
       .json({ success: false, message: "roster already present" });
   }
   //save the roster
-  const wardID = mongoose.Types.ObjectId(req.body.wardID);
+
   const roster = new Roster({
     wardID: wardID,
     month: month,
     days: req.body.roster,
     year: year,
   });
+  console.log("ggot");
   await roster.save((err) => {
     if (err)
       return res
