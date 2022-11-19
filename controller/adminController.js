@@ -288,16 +288,18 @@ const getWardDetails=async(req,res)=>{
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(docObjID);
   const doc_detail=await Doctor.find({wardID:id},null,{});
-  const consultantData_abstract=await Consultant.find({wardID:id},null,{limit:1});
-  
-  const consultant_data=[]
-  if(consultantData_abstract.length>0){
-      consultant_data.push(consultantData_abstract[0].firstName)
-      consultant_data.push(consultantData_abstract[0].lastName)
-      consultant_data.push(consultantData_abstract[0].emailaddress)
-      consultant_data.push(consultantData_abstract[0].telephone)
-      //console.log(consultant_data);
+  const consultantData_abstract=await Consultant.find({wardID:id},null,{});
+  console.log(consultantData_abstract)
+  var consultant_data=[]
+  for(const con of consultantData_abstract){
+    var temp =[]
+    temp.push(con.firstName)
+    temp.push(con.lastName)
+    temp.push(con.emailaddress)
+    temp.push(con.telephone)
+    consultant_data.push(temp)
   }
+
   
   var data=[]
   for(const d of doc_detail){
