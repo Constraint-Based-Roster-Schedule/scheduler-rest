@@ -10,7 +10,7 @@ class SchedulerController {
 
     verifyBody() {
         /* method checks the incoming request body to ensure all the fields are present*/  
-        const reqFields = ["doctor_num","shift_num","days_num","doctors_per_shift","leave_requests","preference_requests"]
+        const reqFields = ["doctor_num","shift_num","days_num","doctors_per_shift","leave_requests","preference_requests", "max_shifts"]
         const recievedKeys = Object.keys(this.body) 
         for (const key in reqFields) {
             // console.log(key);

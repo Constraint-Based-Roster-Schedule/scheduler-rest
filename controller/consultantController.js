@@ -121,6 +121,7 @@ const generateRoster = async (req, res) => {
   const shift_num = req.body.shiftNum;
   const days_num = req.body.numOfDays;
   const doctors_per_shift = req.body.numOfMaximumDoctors;
+  const max_shifts = req.body.numOfMaximumShifts
   var leave_requests;
   var preference_requests;
   if (req.body.isPref) {
@@ -141,6 +142,8 @@ const generateRoster = async (req, res) => {
     doctors_per_shift: doctors_per_shift,
     leave_requests: leave_requests,
     preference_requests: preference_requests,
+    max_shifts: max_shifts,
+
   };
   console.log(requestToScheduler);
 
@@ -194,13 +197,13 @@ const generateRoster = async (req, res) => {
     [[8], [0]],
     [[0], [5]],
   ];
-  if (true) {
+  if (isGenerated) {
     console.log("roster send");
     return res.status(200).json({
       success: true,
       msg: "roster generated according to constraints",
       // roster: genRoster.roster,
-      roster: roster,
+      roster: genRoster.roster,
       isGenerated: true,
     });
   } else {
