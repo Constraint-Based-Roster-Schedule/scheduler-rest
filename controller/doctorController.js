@@ -287,7 +287,7 @@ const getIndividualRoster = async (req, res) => {
     null,
     { limit: 1 }
   );
-  if (myShifts_abstract0.length > 0) {
+  if (myShifts_abstract1.length > 0) {
     myShifts_abstract.push(myShifts_abstract1[0].days);
   }
 
@@ -296,7 +296,7 @@ const getIndividualRoster = async (req, res) => {
     null,
     { limit: 1 }
   );
-  if (myShifts_abstract0.length > 0) {
+  if (myShifts_abstract2.length > 0) {
     myShifts_abstract.push(myShifts_abstract2[0].days);
   }
 
@@ -305,7 +305,7 @@ const getIndividualRoster = async (req, res) => {
     null,
     { limit: 1 }
   );
-  if (myShifts_abstract0.length > 0) {
+  if (myShifts_abstract3.length > 0) {
     myShifts_abstract.push(myShifts_abstract3[0].days);
   }
 
