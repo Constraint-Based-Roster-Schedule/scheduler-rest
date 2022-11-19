@@ -63,15 +63,17 @@ const getUserDetails = async (req, res) => {
 };
 // to get number of doctors in the ward
 const getCountOfDoctors = async (req, res) => {
-  // console.log(req.body);
+  console.log(req.body.wardID);
+  let x = req.body.wardID;
   console.log("indide the get doctor count method");
-  const wardID = req.body.wardID;
+  const wardID = x;
   let doctors = null;
   let doctorCount = 0;
   doctors = await Doctor.count({ wardID: wardID });
+  console.log("doctor count ", doctors);
   if (doctors == 0) {
     console.log("No doctors for this ward");
-    return res.status(500).json({
+    return res.status(201).json({
       success: false,
       msg: "no doctors found",
       doctorCount: 0,
@@ -160,262 +162,53 @@ const generateRoster = async (req, res) => {
   } else {
     isGenerated = false;
   }
-  var roster= [
-		[
-			[
-				8
-			],
-			[
-				9
-			]
-		],
-		[
-			[
-				9
-			],
-			[
-				8
-			]
-		],
-		[
-			[
-				9
-			],
-			[
-				2
-			]
-		],
-		[
-			[
-				2
-			],
-			[
-				9
-			]
-		],
-		[
-			[
-				8
-			],
-			[
-				9
-			]
-		],
-		[
-			[
-				9
-			],
-			[
-				2
-			]
-		],
-		[
-			[
-				6
-			],
-			[
-				7
-			]
-		],
-		[
-			[
-				7
-			],
-			[
-				6
-			]
-		],
-		[
-			[
-				7
-			],
-			[
-				6
-			]
-		],
-		[
-			[
-				6
-			],
-			[
-				7
-			]
-		],
-		[
-			[
-				6
-			],
-			[
-				7
-			]
-		],
-		[
-			[
-				7
-			],
-			[
-				6
-			]
-		],
-		[
-			[
-				5
-			],
-			[
-				0
-			]
-		],
-		[
-			[
-				5
-			],
-			[
-				2
-			]
-		],
-		[
-			[
-				2
-			],
-			[
-				5
-			]
-		],
-		[
-			[
-				5
-			],
-			[
-				0
-			]
-		],
-		[
-			[
-				5
-			],
-			[
-				1
-			]
-		],
-		[
-			[
-				4
-			],
-			[
-				3
-			]
-		],
-		[
-			[
-				1
-			],
-			[
-				4
-			]
-		],
-		[
-			[
-				4
-			],
-			[
-				3
-			]
-		],
-		[
-			[
-				4
-			],
-			[
-				3
-			]
-		],
-		[
-			[
-				3
-			],
-			[
-				4
-			]
-		],
-		[
-			[
-				3
-			],
-			[
-				2
-			]
-		],
-		[
-			[
-				3
-			],
-			[
-				1
-			]
-		],
-		[
-			[
-				0
-			],
-			[
-				1
-			]
-		],
-		[
-			[
-				8
-			],
-			[
-				1
-			]
-		],
-		[
-			[
-				1
-			],
-			[
-				0
-			]
-		],
-		[
-			[
-				4
-			],
-			[
-				8
-			]
-		],
-		[
-			[
-				8
-			],
-			[
-				0
-			]
-		],
-		[
-			[
-				0
-			],
-			[
-				5
-			]
-		]
-	]
+  var roster = [
+    [[8], [9]],
+    [[9], [8]],
+    [[9], [2]],
+    [[2], [9]],
+    [[8], [9]],
+    [[9], [2]],
+    [[6], [7]],
+    [[7], [6]],
+    [[7], [6]],
+    [[6], [7]],
+    [[6], [7]],
+    [[7], [6]],
+    [[5], [0]],
+    [[5], [2]],
+    [[2], [5]],
+    [[5], [0]],
+    [[5], [1]],
+    [[4], [3]],
+    [[1], [4]],
+    [[4], [3]],
+    [[4], [3]],
+    [[3], [4]],
+    [[3], [2]],
+    [[3], [1]],
+    [[0], [1]],
+    [[8], [1]],
+    [[1], [0]],
+    [[4], [8]],
+    [[8], [0]],
+    [[0], [5]],
+  ];
   if (true) {
+    console.log("roster send");
     return res.status(200).json({
       success: true,
       msg: "roster generated according to constraints",
       // roster: genRoster.roster,
-      roster:roster,
-      isGenerated:true
+      roster: roster,
+      isGenerated: true,
     });
   } else {
     console.log("no roster for given costraints");
     return res.status(201).json({
       success: false,
       msg: "can not create a roster from given constraints",
-      isGenerated:false
+      isGenerated: false,
     });
   }
 };
@@ -428,7 +221,7 @@ const saveShift = async (req, res) => {
     });
   } else {
     console.log(req.body);
-    var wardID = req.body.wardID;
+    var wardID = mongoose.Types.ObjectId(req.body.wardID);
     var month = req.body.month;
     var year = req.body.year;
     let availableShift = null;
@@ -443,7 +236,12 @@ const saveShift = async (req, res) => {
         success: false,
       });
     } else {
-      var newShift = Shift(req.body);
+      var newShift = Shift({
+        wardID: wardID,
+        month: month,
+        year: year,
+        shifts: req.body.shifts,
+      });
       await newShift.save(function (err, newShift) {
         if (err) {
           console.error(err);
@@ -637,6 +435,32 @@ const getNotPrefered = async (wardID, month, year) => {
   return outputList;
 };
 
+const getShiftNames = async (req, res) => {
+  const month = req.query.month;
+  const year = req.query.year;
+  const wardID = req.query.wardID;
+  console.log(wardID);
+  var mongoose = require("mongoose");
+  var id = mongoose.Types.ObjectId(wardID);
+  const shiftNames_abstratct = await Shift.find(
+    { month: month, year: year, wardID: id },
+    null,
+    { limit: 1 }
+  );
+  const shiftNames = shiftNames_abstratct[0].shifts;
+  //console.log(shiftNames);
+  return res.status(200).json({ shiftNames: shiftNames });
+};
+
+const getWardNamebyID = async (req, res) => {
+  console.log("awaaa");
+  const wardID = req.query.wardID;
+  var mongoose = require("mongoose");
+  var id = mongoose.Types.ObjectId(wardID);
+  const wards = await Ward.find({ _id: id }, null, { limit: 1 });
+  const wardName = wards[0].wardNumber;
+  return res.status(200).json({ wardNumber: wardName });
+};
 
 module.exports = {
   getUser,
@@ -645,8 +469,10 @@ module.exports = {
   generateRoster,
   saveShift,
   getShiftPerDay,
+  getShiftNames,
+  getWardNamebyID,
   changePassword,
   saveRoster,
   testPath,
-  getShiftNames
+  getShiftNames,
 };

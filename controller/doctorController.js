@@ -1,19 +1,18 @@
 const Doctor = require("../models/doctor");
 const express = require("express");
-const exchangeRequestModel = require("../models/exchangeRequest")
-const rosterSchema=require('../models/rosterSchema');
-const advanceRequests=require('../models/advanceRequest');
-const shifts =require("../models/shifts")
+const exchangeRequestModel = require("../models/exchangeRequest");
+const rosterSchema = require("../models/rosterSchema");
+const advanceRequests = require("../models/advanceRequest");
+const shifts = require("../models/shifts");
 const mongoose = require("mongoose");
 
-const http = require('http');
-const url = require('url');
+const http = require("http");
+const url = require("url");
 const { response } = require("express");
 const { start } = require("repl");
 const bcrypt = require("bcrypt");
 
-const Ward=require('../models/ward')
-
+const Ward = require("../models/ward");
 
 const getUser = async (req, res) => {
   const doctorList = await Doctor.find();
@@ -25,51 +24,45 @@ const getUser = async (req, res) => {
   res.send(doctorList);
 };
 
-
 const getInNotif = async (req, res) => {
-  
-  var recievedByID = req.userID ;
+  var recievedByID = req.userID;
 
   console.log(recievedByID);
   try {
-    var docs = await exchangeRequestModel.find({toID : recievedByID}) ;
-  docs.forEach(element => {
-    console.log(element);
-    
-  });
-  return res.status(200).json(docs)   
+    var docs = await exchangeRequestModel.find({ toID: recievedByID });
+    docs.forEach((element) => {
+      console.log(element);
+    });
+    return res.status(200).json(docs);
   } catch (error) {
-    return console.error(error)
+    return console.error(error);
   }
-  
-
-}
+};
 const putNotif = async (req, res, next) => {
   if (!req.body) {
-    return res.status(201).json({success: false, msg: "can't have empty body"}) ;
+    return res
+      .status(201)
+      .json({ success: false, msg: "can't have empty body" });
   } else {
+
     console.log(req.query)
     var request1 = new exchangeRequestModel(req.body) ;
+
 
     request1.save(function (err, request1) {
       if (err) return console.error(err);
       console.log(request1._id + " saved to exchangeRequests collection.");
-      return res.status(200).json({success: true, msg: "added successfully"}) ;
+      return res.status(200).json({ success: true, msg: "added successfully" });
     });
-
-    
   }
-  ;
-
-}
-const getOutNotif = async(req,res) => {
-  const docID=req.query.docID;
-  const month=req.query.month;
-  const year=req.query.year;
-  const date=req.query.date;
-  var mongoose = require('mongoose');
+};
+const getOutNotif = async (req, res) => {
+  const docID = req.query.docID;
+  const month = req.query.month;
+  const year = req.query.year;
+  const date = req.query.date;
+  var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(docID);
-  //console.log(date);
 
   const rec_notifications=await exchangeRequestModel.find({toID:id,requestState:1,month:month,year:year},null,{});
   const sending_recNot=[]
@@ -78,12 +71,20 @@ const getOutNotif = async(req,res) => {
     if(notif.requestedDate>date){
       if(notif.currentDate>date){
         var id1 = mongoose.Types.ObjectId(notif.fromID.toString());
-        const doc_det=await Doctor.find({_id:id1},null,{limit:1});
-        sending_recNot.push({"id":notif._id.toString(),"date":notif.currentDate, "workingslot":notif.currentShift,"datewith":notif.requestedDate,"shiftwith":notif.requestedShift,"doctorID":notif.fromID.toString(),"doctorName":doc_det[0].firstName,"state":notif.requestState})
-      }      
+        const doc_det = await Doctor.find({ _id: id1 }, null, { limit: 1 });
+        sending_recNot.push({
+          id: notif._id.toString(),
+          date: notif.currentDate,
+          workingslot: notif.currentShift,
+          datewith: notif.requestedDate,
+          shiftwith: notif.requestedShift,
+          doctorID: notif.fromID.toString(),
+          doctorName: doc_det[0].firstName,
+          state: notif.requestState,
+        });
+      }
     }
   }
-  //console.log(sending_recNot);
 
   const accepted_notifications=await exchangeRequestModel.find({fromID:id,requestState:2,month:month,year:year},null,{});
   const sentNotifications=[];
@@ -92,9 +93,18 @@ const getOutNotif = async(req,res) => {
     if(notif.requestedDate>date){
       if(notif.currentDate>date){
         var id1 = mongoose.Types.ObjectId(notif.toID.toString());
-        const doc_det=await Doctor.find({_id:id1},null,{limit:1});
-        sentNotifications.push({"id":notif._id.toString(),"date":notif.currentDate, "workingslot":notif.currentShift,"datewith":notif.requestedDate,"shiftwith":notif.requestedShift,"doctorID":notif.toID.toString(),"doctorName":doc_det[0].firstName,"state":notif.requestState})
-      }      
+        const doc_det = await Doctor.find({ _id: id1 }, null, { limit: 1 });
+        sentNotifications.push({
+          id: notif._id.toString(),
+          date: notif.currentDate,
+          workingslot: notif.currentShift,
+          datewith: notif.requestedDate,
+          shiftwith: notif.requestedShift,
+          doctorID: notif.toID.toString(),
+          doctorName: doc_det[0].firstName,
+          state: notif.requestState,
+        });
+      }
     }
   }
 
@@ -104,52 +114,65 @@ const getOutNotif = async(req,res) => {
     if(notif.requestedDate>date){
       if(notif.currentDate>date){
         var id1 = mongoose.Types.ObjectId(notif.toID.toString());
-        const doc_det=await Doctor.find({_id:id1},null,{limit:1});
-        sentNotifications.push({"id":notif._id.toString(),"date":notif.currentDate, "workingslot":notif.currentShift,"datewith":notif.requestedDate,"shiftwith":notif.requestedShift,"doctorID":notif.toID.toString(),"doctorName":doc_det[0].firstName,"state":notif.requestState})
-      }      
+        const doc_det = await Doctor.find({ _id: id1 }, null, { limit: 1 });
+        sentNotifications.push({
+          id: notif._id.toString(),
+          date: notif.currentDate,
+          workingslot: notif.currentShift,
+          datewith: notif.requestedDate,
+          shiftwith: notif.requestedShift,
+          doctorID: notif.toID.toString(),
+          doctorName: doc_det[0].firstName,
+          state: notif.requestState,
+        });
+      }
     }
   }
-  //console.log(sentNotifications);
 
-  return res.status(200).json({"received":sending_recNot,"sent":sentNotifications});
 
-}
-const hideNotif = async (req,res) => {
-
-}
-const declineRequest = async (req,res) => {
-  const not_id=req.query.notifID;
-  var mongoose = require('mongoose');
+  return res
+    .status(200)
+    .json({ received: sending_recNot, sent: sentNotifications });
+};
+const hideNotif = async (req, res) => {};
+const declineRequest = async (req, res) => {
+  const not_id = req.query.notifID;
+  var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(not_id);
 
   const filter = { _id: id };
   const update = { requestState: 3 };
-  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
-  return res.status(200).json({success: true, msg: "added successfully"}) ;
-}
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {
+    new: true,
+  });
+  return res.status(200).json({ success: true, msg: "added successfully" });
+};
 
-
-const acceptRequest = async (req,res) => {
-  const not_id=req.query.notifID;
-  var mongoose = require('mongoose');
+const acceptRequest = async (req, res) => {
+  const not_id = req.query.notifID;
+  var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(not_id);
 
   const filter = { _id: id };
   const update = { requestState: 2 };
-  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
-  return res.status(200).json({success: true, msg: "added successfully"}) ;
-}
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {
+    new: true,
+  });
+  return res.status(200).json({ success: true, msg: "added successfully" });
+};
 
-const closeNotification=async(req,res)=>{
-  const not_id=req.query.notifID;
-  var mongoose = require('mongoose');
+const closeNotification = async (req, res) => {
+  const not_id = req.query.notifID;
+  var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(not_id);
 
   const filter = { _id: id };
   const update = { requestState: 4 };
-  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {new: true});
-  return res.status(200).json({success: true, msg: "added successfully"}) ;
-}
+  let doc = await exchangeRequestModel.findOneAndUpdate(filter, update, {
+    new: true,
+  });
+  return res.status(200).json({ success: true, msg: "added successfully" });
+};
 
 
 const getData=async(req,res)=>{
@@ -165,41 +188,41 @@ const getData=async(req,res)=>{
   //console.log(id);
   const wardRoster=wardRoster_abstract[0].days;
 
-  let myShifts=[]
-  for(const day of wardRoster){
-    let dayShifts=[]
-    let shift_num=0;
-    for(const shift of day){
-      if(shift.includes(intID.toString())){
-        dayShifts.push(shift_num)
+  let myShifts = [];
+  for (const day of wardRoster) {
+    let dayShifts = [];
+    let shift_num = 0;
+    for (const shift of day) {
+      if (shift.includes(intID.toString())) {
+        dayShifts.push(shift_num);
       }
-      shift_num+=1;
+      shift_num += 1;
     }
-    myShifts.push(dayShifts)   
+    myShifts.push(dayShifts);
   }
   //console.log(myShifts);
   
   return res.status(200).json({"myShifts":myShifts});
 }
 
-
-const submitLeaveRequest=(req,res)=>{
-  const leaves=req.query.leaveRequests;
-  const month=req.query.month;
-  const year=req.query.year;
-  const docID=req.query.docID;
-  const wardID=req.query.wardID;
-  var mongoose = require('mongoose');
+const submitLeaveRequest = (req, res) => {
+  const leaves = req.query.leaveRequests;
+  const month = req.query.month;
+  const year = req.query.year;
+  const docID = req.query.docID;
+  const wardID = req.query.wardID;
+  var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(docID);
+
   var ward_id=mongoose.Types.ObjectId(wardID);
-  console.log(leaves)
+
   const saving_data={"doctorNumber":id,"wardNumber":ward_id,"typeID":2,"shiftMonth":month,"shiftYear":year,"shifts":leaves}
   console.log(saving_data);
   var request1 = new advanceRequests(saving_data) ;
   request1.save(function (err, request1) {
     if (err) return console.error(err);
     console.log(request1._id + " saved to exchangeRequests collection.");
-    return res.status(200).json({success: true, msg: "added successfully"}) ;
+    return res.status(200).json({ success: true, msg: "added successfully" });
   });
   //console.log(leaves)
   
@@ -220,61 +243,79 @@ const submitPreferrableSlots=(req,res)=>{
   request1.save(function (err, request1) {
     if (err) return console.error(err);
     console.log(request1._id + " saved to exchangeRequests collection.");
-    return res.status(200).json({success: true, msg: "added successfully"}) ;
+    return res.status(200).json({ success: true, msg: "added successfully" });
   });
-}
+};
 
-const getIndividualRoster=async(req,res)=>{
-
-  const month=req.query.month;
-  const year=req.query.year;
-  const months=req.query.months;
-  const wardID=req.query.wardID;
+const getIndividualRoster = async (req, res) => {
+  const month = req.query.month;
+  const year = req.query.year;
+  const months = req.query.months;
+  const wardID = req.query.wardID;
   // const wardID=req.query.wardID;
   // const wardId_string=wardID.toString()
   // const myID=req.query.myID
   //console.log(months);
-  var mongoose = require('mongoose');
+  var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(wardID);
-  function getMonthFromString(mon){
-   return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
+  function getMonthFromString(mon) {
+    return new Date(Date.parse(mon + " 1, 2012")).getMonth() + 1;
   }
 
-  const int_month=getMonthFromString(month)-1;
+  const int_month = getMonthFromString(month) - 1;
 
-  const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
+
+  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
   const shiftNames=shiftNames_abstratct[0].shifts;
+
+
   //console.log(shiftNames);
 
-  
-  const myShifts_abstract=[]
+  const myShifts_abstract = [];
 
-  const myShifts_abstract0=await rosterSchema.find({month:months[0],year:year,wardID:id},null,{limit:1});
-  if(myShifts_abstract0.length>0){
-    myShifts_abstract.push(myShifts_abstract0[0].days)
+  const myShifts_abstract0 = await rosterSchema.find(
+    { month: months[0], year: year, wardID: id },
+    null,
+    { limit: 1 }
+  );
+  if (myShifts_abstract0.length > 0) {
+    myShifts_abstract.push(myShifts_abstract0[0].days);
   }
 
-  const myShifts_abstract1=await rosterSchema.find({month:months[1],year:year,wardID:id},null,{limit:1});
-  if(myShifts_abstract0.length>0){
-    myShifts_abstract.push(myShifts_abstract1[0].days)
+  const myShifts_abstract1 = await rosterSchema.find(
+    { month: months[1], year: year, wardID: id },
+    null,
+    { limit: 1 }
+  );
+  if (myShifts_abstract0.length > 0) {
+    myShifts_abstract.push(myShifts_abstract1[0].days);
   }
 
-  const myShifts_abstract2=await rosterSchema.find({month:months[2],year:year,wardID:id},null,{limit:1});
-  if(myShifts_abstract0.length>0){
-    myShifts_abstract.push(myShifts_abstract2[0].days)
+  const myShifts_abstract2 = await rosterSchema.find(
+    { month: months[2], year: year, wardID: id },
+    null,
+    { limit: 1 }
+  );
+  if (myShifts_abstract0.length > 0) {
+    myShifts_abstract.push(myShifts_abstract2[0].days);
   }
 
-  const myShifts_abstract3=await rosterSchema.find({month:months[3],year:year,wardID:id},null,{limit:1});
-  if(myShifts_abstract0.length>0){
-    myShifts_abstract.push(myShifts_abstract3[0].days)
+  const myShifts_abstract3 = await rosterSchema.find(
+    { month: months[3], year: year, wardID: id },
+    null,
+    { limit: 1 }
+  );
+  if (myShifts_abstract0.length > 0) {
+    myShifts_abstract.push(myShifts_abstract3[0].days);
   }
 
-  
   //const myShifts=myShifts_abstract[0].days;
   //console.log(myShifts_abstract);
   // console.log(myShifts);
-  return res.status(200).json({"shiftNames":shiftNames,"myShifts":myShifts_abstract});
-}
+  return res
+    .status(200)
+    .json({ shiftNames: shiftNames, myShifts: myShifts_abstract });
+};
 
 const getWardDoctors=async(req,res)=>{
   const wardID=req.query.wardID;
@@ -282,11 +323,11 @@ const getWardDoctors=async(req,res)=>{
   //console.log(wardId_string)
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardId_string);
-  const ward_doctors=await Doctor.find({wardID:wardID},null,{});
-  const doctorDetails=[]
-  for(const doc of ward_doctors){
-    const id_string=doc._id.toString();
-    doctorDetails.push([doc.docID,doc.firstName,doc.lastName,id_string])
+  const ward_doctors = await Doctor.find({ wardID: wardID }, null, {});
+  const doctorDetails = [];
+  for (const doc of ward_doctors) {
+    const id_string = doc._id.toString();
+    doctorDetails.push([doc.docID, doc.firstName, doc.lastName, id_string]);
   }
   //console.log(doctorDetails)
   return res.status(200).json({"doctorDetails":doctorDetails});
@@ -296,7 +337,10 @@ const getWardDoctors=async(req,res)=>{
 const getShiftNames=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
-  const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
+  const wardID=req.query.wardID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
   const shiftNames=shiftNames_abstratct[0].shifts;
   //console.log(shiftNames);
   return res.status(200).json({"shiftNames":shiftNames});
@@ -307,7 +351,7 @@ const getUserDetails = async (req, res) => {
   console.log(userId);
   const userType = req.body.type;
   console.log(req.body);
-  
+
   let userDetails = null;
   let wardDetails = null;
  
@@ -340,7 +384,6 @@ const getUserDetails = async (req, res) => {
       // res.send(userDetails);
     }
   }
-
 };
 const changePassword = async (req, res) => {
   console.log(req.body);
@@ -353,11 +396,8 @@ const changePassword = async (req, res) => {
     const email = req.body.email;
     const currenrPassword = req.body.currentPassword;
     const newPassword = req.body.newPassword;
-    let doctor = await Doctor.findOne(
-      { emailaddress: email },
-      { password: 1 }
-    );
-    console.log(doctor)
+    let doctor = await Doctor.findOne({ emailaddress: email }, { password: 1 });
+    console.log(doctor);
     if (!doctor) {
       return res.status(200).json({
         msg: "Current Password does not match",
@@ -402,8 +442,20 @@ const changePassword = async (req, res) => {
   }
 };
 
+
+const getWardNamebyID=async(req,res)=>{
+  const wardID=req.query.wardID;
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  const wards=await Ward.find({_id:id},null,{limit:1});
+  const wardName=wards[0].wardNumber;
+  return res.status(200).json({"wardNumber":wardName});
+}
+
+
 module.exports = {
 
-  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,changePassword, getWardDoctors,closeNotification
+  getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification,
+  getWardNamebyID,changePassword, getWardDoctors,closeNotification
+}
 
-};

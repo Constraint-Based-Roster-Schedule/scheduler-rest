@@ -9,7 +9,11 @@ router.post('/doctorsCount',consultantController.getCountOfDoctors)
 router.post('/generateRoster',consultantController.generateRoster)
 
 router.post('/getShiftCount',consultantController.getShiftPerDay)
-router.post('/addShift',consultantController.saveShift)
+
+router.post('/addShift',consultantController.saveShift);
+router.get('/getWardNamebyID',consultantController.getWardNamebyID);
+router.get('/getShiftNames',consultantController.getShiftNames);
+
 router.post('/changePassword',consultantController.changePassword)
 
 router.post('/saveRoster',consultantController.saveRoster)
