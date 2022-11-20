@@ -57,13 +57,14 @@ const putNotif = async (req, res, next) => {
   }
 };
 const getOutNotif = async (req, res) => {
+  //console.log("kasjhd")
   const docID = req.query.docID;
   const month = req.query.month;
   const year = req.query.year;
   const date = req.query.date;
   var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(docID);
-
+  //console.log(docID)
   const rec_notifications=await exchangeRequestModel.find({toID:id,requestState:1,month:month,year:year},null,{});
   const sending_recNot=[]
   for(const notif of rec_notifications){
@@ -85,7 +86,7 @@ const getOutNotif = async (req, res) => {
       }
     }
   }
-
+  console.log(sending_recNot)
   const accepted_notifications=await exchangeRequestModel.find({fromID:id,requestState:2,month:month,year:year},null,{});
   const sentNotifications=[];
   for(const notif of accepted_notifications){
@@ -182,27 +183,34 @@ const getData=async(req,res)=>{
   const intID=req.query.intID;
   const wardId_string=wardID.toString();
   //console.log(wardId_string)
+  //console.log(intID)
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardId_string);
   const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
   //console.log(id);
-  const wardRoster=wardRoster_abstract[0].days;
+  let wardRoster=[]
+  if(wardRoster_abstract.length>0){
+    wardRoster=wardRoster_abstract[0].days;
+  }
 
+  console.log(wardRoster)
   let myShifts = [];
   for (const day of wardRoster) {
+    //console.log(day)
     let dayShifts = [];
     let shift_num = 0;
     for (const shift of day) {
-      if (shift.includes(intID.toString())) {
+      //console.log(shift)
+      if (shift.includes(+intID)) {
         dayShifts.push(shift_num);
       }
       shift_num += 1;
     }
     myShifts.push(dayShifts);
   }
-  //console.log(myShifts);
+  console.log(myShifts);
   
-  return res.status(200).json({"myShifts":myShifts});
+  return res.status(200).json({"myShifts":myShifts,"wardShifts":wardRoster});
 }
 
 const submitLeaveRequest = (req, res) => {
@@ -269,24 +277,32 @@ const getIndividualRoster = async (req, res) => {
   if (shiftNames_abstratct0.length>0){
     const shiftNames=shiftNames_abstratct0[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   const shiftNames_abstratct1=await shifts.find({month:months[1],year:year,wardID:id},null,{limit:1});
   if (shiftNames_abstratct1.length>0){
     const shiftNames=shiftNames_abstratct1[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   const shiftNames_abstratct2=await shifts.find({month:months[2],year:year,wardID:id},null,{limit:1});
   if (shiftNames_abstratct2.length>0){
     const shiftNames=shiftNames_abstratct2[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   const shiftNames_abstratct3=await shifts.find({month:months[3],year:year,wardID:id},null,{limit:1});
   if (shiftNames_abstratct3.length>0){
     const shiftNames=shiftNames_abstratct3[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   console.log(finalShiftNames);
@@ -300,6 +316,8 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract0.length > 0) {
     myShifts_abstract.push(myShifts_abstract0[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   const myShifts_abstract1 = await rosterSchema.find(
@@ -309,6 +327,8 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract1.length > 0) {
     myShifts_abstract.push(myShifts_abstract1[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   const myShifts_abstract2 = await rosterSchema.find(
@@ -318,6 +338,8 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract2.length > 0) {
     myShifts_abstract.push(myShifts_abstract2[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   const myShifts_abstract3 = await rosterSchema.find(
@@ -327,10 +349,12 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract3.length > 0) {
     myShifts_abstract.push(myShifts_abstract3[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   //const myShifts=myShifts_abstract[0].days;
-  //console.log(myShifts_abstract);
+  console.log(myShifts_abstract);
   // console.log(myShifts);
   //console.log(shiftNames)
   return res
@@ -359,12 +383,66 @@ const getShiftNames=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const wardID=req.query.wardID;
+
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardID);
-  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
-  const shiftNames=shiftNames_abstratct[0].shifts;
-  //console.log(shiftNames);
+  const shiftNames_abstratct=await shifts.find({wardID:id},null,{limit:1});
+  //console.log(shiftNames_abstratct)
+  var shiftNames=[]
+  if(shiftNames_abstratct.length>0){
+      shiftNames=shiftNames_abstratct[0].shifts;
+  }
+
   return res.status(200).json({"shiftNames":shiftNames});
+}
+
+const getShiftNamesForRoster=async(req,res)=>{
+  const month=req.query.month;
+  const year=req.query.year;
+  const wardID=req.query.wardID;
+  const months=req.query.months;
+
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  
+  const finalShiftNames=[]
+
+  const shiftNames_abstratct0=await shifts.find({month:months[0],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct0.length>0){
+    const shiftNames=shiftNames_abstratct0[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  const shiftNames_abstratct1=await shifts.find({month:months[1],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct1.length>0){
+    const shiftNames=shiftNames_abstratct1[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  const shiftNames_abstratct2=await shifts.find({month:months[2],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct2.length>0){
+    const shiftNames=shiftNames_abstratct2[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  const shiftNames_abstratct3=await shifts.find({month:months[3],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct3.length>0){
+    const shiftNames=shiftNames_abstratct3[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  console.log(finalShiftNames);
+
+
+  return res.status(200).json({"shiftNames":finalShiftNames});
 }
 
 const getUserDetails = async (req, res) => {
@@ -478,6 +556,6 @@ const getWardNamebyID=async(req,res)=>{
 module.exports = {
 
   getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification,
-  getWardNamebyID,changePassword, getWardDoctors,closeNotification
+  getWardNamebyID,changePassword, getWardDoctors,closeNotification,getShiftNamesForRoster
 }
 

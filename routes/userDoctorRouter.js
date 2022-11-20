@@ -23,5 +23,6 @@ router.post('/userDetails',doctorController.getUserDetails);
 router.get('/getWardDoctors',doctorController.getWardDoctors);
 router.get('/closeNotification',doctorController.closeNotification);
 router.get('/getWardNamebyID',doctorController.getWardNamebyID);
+router.get('/getShiftNamesForRoster',doctorController.getShiftNamesForRoster);
 module.exports=router;
 
