@@ -187,7 +187,11 @@ const getData=async(req,res)=>{
   var id = mongoose.Types.ObjectId(wardId_string);
   const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
   //console.log(id);
-  const wardRoster=wardRoster_abstract[0].days;
+  const wardRoster=[]
+  if(wardRoster_abstract.length>0){
+    wardRoster=wardRoster_abstract[0].days;
+  }
+
   console.log(wardRoster)
   let myShifts = [];
   for (const day of wardRoster) {
@@ -349,7 +353,7 @@ const getIndividualRoster = async (req, res) => {
   }
 
   //const myShifts=myShifts_abstract[0].days;
-  //console.log(myShifts_abstract);
+  console.log(myShifts_abstract);
   // console.log(myShifts);
   //console.log(shiftNames)
   return res
@@ -378,22 +382,66 @@ const getShiftNames=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const wardID=req.query.wardID;
-  // console.log(month)
-  // console.log(year)
-  // console.log(wardID)
+
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardID);
-  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
+  const shiftNames_abstratct=await shifts.find({wardID:id},null,{limit:1});
   //console.log(shiftNames_abstratct)
   var shiftNames=[]
   if(shiftNames_abstratct.length>0){
       shiftNames=shiftNames_abstratct[0].shifts;
   }
 
-  // console.log(shiftNames);
-  // console.log(year);
-  // console.log(wardID);
   return res.status(200).json({"shiftNames":shiftNames});
+}
+
+const getShiftNamesForRoster=async(req,res)=>{
+  const month=req.query.month;
+  const year=req.query.year;
+  const wardID=req.query.wardID;
+  const months=req.query.months;
+
+  var mongoose = require('mongoose');
+  var id = mongoose.Types.ObjectId(wardID);
+  
+  const finalShiftNames=[]
+
+  const shiftNames_abstratct0=await shifts.find({month:months[0],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct0.length>0){
+    const shiftNames=shiftNames_abstratct0[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  const shiftNames_abstratct1=await shifts.find({month:months[1],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct1.length>0){
+    const shiftNames=shiftNames_abstratct1[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  const shiftNames_abstratct2=await shifts.find({month:months[2],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct2.length>0){
+    const shiftNames=shiftNames_abstratct2[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  const shiftNames_abstratct3=await shifts.find({month:months[3],year:year,wardID:id},null,{limit:1});
+  if (shiftNames_abstratct3.length>0){
+    const shiftNames=shiftNames_abstratct3[0].shifts;
+    finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
+  }
+
+  console.log(finalShiftNames);
+
+
+  return res.status(200).json({"shiftNames":finalShiftNames});
 }
 
 const getUserDetails = async (req, res) => {
@@ -507,6 +555,6 @@ const getWardNamebyID=async(req,res)=>{
 module.exports = {
 
   getUser,getData,submitLeaveRequest,submitPreferrableSlots,getIndividualRoster,getShiftNames, getInNotif, putNotif, getOutNotif, hideNotif, declineRequest, acceptRequest,getUserDetails,getWardDoctors,closeNotification,
-  getWardNamebyID,changePassword, getWardDoctors,closeNotification
+  getWardNamebyID,changePassword, getWardDoctors,closeNotification,getShiftNamesForRoster
 }
 
