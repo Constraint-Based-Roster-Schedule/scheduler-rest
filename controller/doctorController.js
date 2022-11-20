@@ -182,27 +182,30 @@ const getData=async(req,res)=>{
   const intID=req.query.intID;
   const wardId_string=wardID.toString();
   //console.log(wardId_string)
+  //console.log(intID)
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardId_string);
   const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
   //console.log(id);
   const wardRoster=wardRoster_abstract[0].days;
-
+  console.log(wardRoster)
   let myShifts = [];
   for (const day of wardRoster) {
+    //console.log(day)
     let dayShifts = [];
     let shift_num = 0;
     for (const shift of day) {
-      if (shift.includes(intID.toString())) {
+      //console.log(shift)
+      if (shift.includes(+intID)) {
         dayShifts.push(shift_num);
       }
       shift_num += 1;
     }
     myShifts.push(dayShifts);
   }
-  //console.log(myShifts);
+  console.log(myShifts);
   
-  return res.status(200).json({"myShifts":myShifts});
+  return res.status(200).json({"myShifts":myShifts,"wardShifts":wardRoster});
 }
 
 const submitLeaveRequest = (req, res) => {
@@ -269,24 +272,32 @@ const getIndividualRoster = async (req, res) => {
   if (shiftNames_abstratct0.length>0){
     const shiftNames=shiftNames_abstratct0[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   const shiftNames_abstratct1=await shifts.find({month:months[1],year:year,wardID:id},null,{limit:1});
   if (shiftNames_abstratct1.length>0){
     const shiftNames=shiftNames_abstratct1[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   const shiftNames_abstratct2=await shifts.find({month:months[2],year:year,wardID:id},null,{limit:1});
   if (shiftNames_abstratct2.length>0){
     const shiftNames=shiftNames_abstratct2[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   const shiftNames_abstratct3=await shifts.find({month:months[3],year:year,wardID:id},null,{limit:1});
   if (shiftNames_abstratct3.length>0){
     const shiftNames=shiftNames_abstratct3[0].shifts;
     finalShiftNames.push(shiftNames)
+  }else{
+    finalShiftNames.push([])
   }
 
   console.log(finalShiftNames);
@@ -300,6 +311,8 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract0.length > 0) {
     myShifts_abstract.push(myShifts_abstract0[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   const myShifts_abstract1 = await rosterSchema.find(
@@ -309,6 +322,8 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract1.length > 0) {
     myShifts_abstract.push(myShifts_abstract1[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   const myShifts_abstract2 = await rosterSchema.find(
@@ -318,6 +333,8 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract2.length > 0) {
     myShifts_abstract.push(myShifts_abstract2[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   const myShifts_abstract3 = await rosterSchema.find(
@@ -327,6 +344,8 @@ const getIndividualRoster = async (req, res) => {
   );
   if (myShifts_abstract3.length > 0) {
     myShifts_abstract.push(myShifts_abstract3[0].days);
+  }else{
+    myShifts_abstract.push([])
   }
 
   //const myShifts=myShifts_abstract[0].days;
@@ -359,11 +378,21 @@ const getShiftNames=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const wardID=req.query.wardID;
+  // console.log(month)
+  // console.log(year)
+  // console.log(wardID)
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardID);
   const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
-  const shiftNames=shiftNames_abstratct[0].shifts;
-  //console.log(shiftNames);
+  //console.log(shiftNames_abstratct)
+  var shiftNames=[]
+  if(shiftNames_abstratct.length>0){
+      shiftNames=shiftNames_abstratct[0].shifts;
+  }
+
+  // console.log(shiftNames);
+  // console.log(year);
+  // console.log(wardID);
   return res.status(200).json({"shiftNames":shiftNames});
 }
 
