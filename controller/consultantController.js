@@ -1,14 +1,11 @@
 const Doctor = require("../models/doctor");
 const express = require("express");
-
 const mongoose = require("mongoose");
 const Ward = require("../models/ward");
 const Consultant = require("../models/consultant");
-
 const Shift = require("../models/shifts");
 const shifts = require("../models/shifts");
 const bcrypt = require("bcrypt");
-
 const Roster = require("../models/rosterSchema");
 const SchedulerController = require("./schedulerController");
 const advanceRequest = require("../models/advanceRequest");
@@ -22,6 +19,8 @@ const getUser = async (req, res) => {
   }
   res.send(doctorList);
 };
+
+//function to get user details from the database
 const getUserDetails = async (req, res) => {
   const userName = req.body.userName;
   const userType = req.body.type;
@@ -57,10 +56,10 @@ const getUserDetails = async (req, res) => {
         userName: userDetails.userName,
         speciality: userDetails.speciality,
       });
-      // res.send(userDetails);
     }
   }
 };
+
 // to get number of doctors in the ward
 const getCountOfDoctors = async (req, res) => {
   console.log(req.body.wardID);
@@ -80,7 +79,6 @@ const getCountOfDoctors = async (req, res) => {
     });
   } else {
     console.log("doctores found");
-    // console.log(Doctor.find({wardID:wardID}));
     return res.status(200).json({
       msg: "doctor count founded",
       success: true,
@@ -88,9 +86,10 @@ const getCountOfDoctors = async (req, res) => {
     });
   }
 };
+
+//function to get shifts per day in a specific ward
 const getShiftPerDay = async (req, res) => {
   console.log(req.body);
-  console.log("ddddddddddddddddddddd");
   wardID = req.body.wardId;
   shiftCountOfWard = await Ward.findOne({ _id: wardID }, { shiftsPerDay: 1 });
   if (!shiftCountOfWard) {
@@ -147,7 +146,6 @@ const generateRoster = async (req, res) => {
   console.log(requestToScheduler);
 
   const scheduler = new SchedulerController(requestToScheduler);
-  // TODO: check the body here
   const dataCheck = scheduler.verifyBody();
   if (!dataCheck) {
     return res.status(500).json({
@@ -158,7 +156,7 @@ const generateRoster = async (req, res) => {
   const genRoster = await scheduler.dispatchAPIRequest();
   console.log(genRoster);
 
-  // assign the roster to here from the algorithem
+
   if (genRoster.message === "success") {
     isGenerated = true;
   } else {
@@ -201,7 +199,6 @@ const generateRoster = async (req, res) => {
     return res.status(200).json({
       success: true,
       msg: "roster generated according to constraints",
-      // roster: genRoster.roster,
       roster: genRoster.roster,
       isGenerated: true,
     });
@@ -214,6 +211,8 @@ const generateRoster = async (req, res) => {
     });
   }
 };
+
+//save roster to the database
 const saveShift = async (req, res) => {
   console.log("in the save shift modle");
   if (!req.body) {
@@ -259,6 +258,8 @@ const saveShift = async (req, res) => {
     }
   }
 };
+
+//function to change password
 const changePassword = async (req, res) => {
   console.log(req.body);
   if (!req.body) {
@@ -442,6 +443,8 @@ const getNotPrefered = async (wardID, month, year) => {
   return outputList;
 };
 
+
+//get shift names from the database
 const getShiftNames = async (req, res) => {
   const month = req.query.month;
   const year = req.query.year;
@@ -455,10 +458,11 @@ const getShiftNames = async (req, res) => {
     { limit: 1 }
   );
   const shiftNames = shiftNames_abstratct[0].shifts;
-  //console.log(shiftNames);
   return res.status(200).json({ shiftNames: shiftNames });
 };
 
+
+//function to get ward name when ward id is given
 const getWardNamebyID = async (req, res) => {
   console.log("awaaa");
   const wardID = req.query.wardID;
