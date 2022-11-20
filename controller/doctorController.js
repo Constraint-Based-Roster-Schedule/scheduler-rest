@@ -187,7 +187,7 @@ const getData=async(req,res)=>{
   var id = mongoose.Types.ObjectId(wardId_string);
   const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
   //console.log(id);
-  const wardRoster=[]
+  let wardRoster=[]
   if(wardRoster_abstract.length>0){
     wardRoster=wardRoster_abstract[0].days;
   }
