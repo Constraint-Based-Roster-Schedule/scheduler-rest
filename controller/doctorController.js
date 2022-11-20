@@ -27,7 +27,6 @@ const getUser = async (req, res) => {
 const getInNotif = async (req, res) => {
   var recievedByID = req.userID;
 
-  console.log(recievedByID);
   try {
     var docs = await exchangeRequestModel.find({ toID: recievedByID });
     docs.forEach((element) => {
@@ -38,6 +37,9 @@ const getInNotif = async (req, res) => {
     return console.error(error);
   }
 };
+
+
+//Put a shift exchange request to the database
 const putNotif = async (req, res, next) => {
   if (!req.body) {
     return res
@@ -45,7 +47,6 @@ const putNotif = async (req, res, next) => {
       .json({ success: false, msg: "can't have empty body" });
   } else {
 
-    console.log(req.query)
     var request1 = new exchangeRequestModel(req.body) ;
 
 
@@ -56,19 +57,18 @@ const putNotif = async (req, res, next) => {
     });
   }
 };
+
+//Get received notifications from the database
 const getOutNotif = async (req, res) => {
-  //console.log("kasjhd")
   const docID = req.query.docID;
   const month = req.query.month;
   const year = req.query.year;
   const date = req.query.date;
   var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(docID);
-  //console.log(docID)
   const rec_notifications=await exchangeRequestModel.find({toID:id,requestState:1,month:month,year:year},null,{});
   const sending_recNot=[]
   for(const notif of rec_notifications){
-    //const int_requestDate=+notif.requestedDate;
     if(notif.requestedDate>date){
       if(notif.currentDate>date){
         var id1 = mongoose.Types.ObjectId(notif.fromID.toString());
@@ -90,7 +90,6 @@ const getOutNotif = async (req, res) => {
   const accepted_notifications=await exchangeRequestModel.find({fromID:id,requestState:2,month:month,year:year},null,{});
   const sentNotifications=[];
   for(const notif of accepted_notifications){
-    //const int_requestDate=+notif.requestedDate;
     if(notif.requestedDate>date){
       if(notif.currentDate>date){
         var id1 = mongoose.Types.ObjectId(notif.toID.toString());
@@ -111,7 +110,6 @@ const getOutNotif = async (req, res) => {
 
   const declined_notifications=await exchangeRequestModel.find({fromID:id,requestState:3,month:month,year:year},null,{});
   for(const notif of declined_notifications){
-    //const int_requestDate=+notif.requestedDate;
     if(notif.requestedDate>date){
       if(notif.currentDate>date){
         var id1 = mongoose.Types.ObjectId(notif.toID.toString());
@@ -136,6 +134,8 @@ const getOutNotif = async (req, res) => {
     .json({ received: sending_recNot, sent: sentNotifications });
 };
 const hideNotif = async (req, res) => {};
+
+//update declined shift requests in the database 
 const declineRequest = async (req, res) => {
   const not_id = req.query.notifID;
   var mongoose = require("mongoose");
@@ -149,6 +149,8 @@ const declineRequest = async (req, res) => {
   return res.status(200).json({ success: true, msg: "added successfully" });
 };
 
+
+//update accepted shift requests in the database 
 const acceptRequest = async (req, res) => {
   const not_id = req.query.notifID;
   var mongoose = require("mongoose");
@@ -176,18 +178,16 @@ const closeNotification = async (req, res) => {
 };
 
 
+//Get relevant data for shift request page from the database
 const getData=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
   const wardID=req.query.wardID;
   const intID=req.query.intID;
   const wardId_string=wardID.toString();
-  //console.log(wardId_string)
-  //console.log(intID)
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardId_string);
   const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
-  //console.log(id);
   let wardRoster=[]
   if(wardRoster_abstract.length>0){
     wardRoster=wardRoster_abstract[0].days;
@@ -196,11 +196,9 @@ const getData=async(req,res)=>{
   console.log(wardRoster)
   let myShifts = [];
   for (const day of wardRoster) {
-    //console.log(day)
     let dayShifts = [];
     let shift_num = 0;
     for (const shift of day) {
-      //console.log(shift)
       if (shift.includes(+intID)) {
         dayShifts.push(shift_num);
       }
@@ -213,6 +211,7 @@ const getData=async(req,res)=>{
   return res.status(200).json({"myShifts":myShifts,"wardShifts":wardRoster});
 }
 
+//Save leave requests in the database
 const submitLeaveRequest = (req, res) => {
   const leaves = req.query.leaveRequests;
   const month = req.query.month;
@@ -232,10 +231,11 @@ const submitLeaveRequest = (req, res) => {
     console.log(request1._id + " saved to exchangeRequests collection.");
     return res.status(200).json({ success: true, msg: "added successfully" });
   });
-  //console.log(leaves)
   
 }
 
+
+//save preferable work slots in the database
 const submitPreferrableSlots=(req,res)=>{
   const leaves=req.query.prefferableSlots;
   const month=req.query.month;
@@ -255,15 +255,13 @@ const submitPreferrableSlots=(req,res)=>{
   });
 };
 
+
+//Get ward roster from the database as an array
 const getIndividualRoster = async (req, res) => {
   const month = req.query.month;
   const year = req.query.year;
   const months = req.query.months;
   const wardID = req.query.wardID;
-  // const wardID=req.query.wardID;
-  // const wardId_string=wardID.toString()
-  // const myID=req.query.myID
-  //console.log(months);
   var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(wardID);
   function getMonthFromString(mon) {
@@ -353,19 +351,17 @@ const getIndividualRoster = async (req, res) => {
     myShifts_abstract.push([])
   }
 
-  //const myShifts=myShifts_abstract[0].days;
   console.log(myShifts_abstract);
-  // console.log(myShifts);
-  //console.log(shiftNames)
   return res
     .status(200)
     .json({ shiftNames: finalShiftNames, myShifts: myShifts_abstract });
 };
 
+
+//Get details of ward doctors
 const getWardDoctors=async(req,res)=>{
   const wardID=req.query.wardID;
   const wardId_string=wardID.toString();
-  //console.log(wardId_string)
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardId_string);
   const ward_doctors = await Doctor.find({ wardID: wardID }, null, {});
@@ -374,11 +370,11 @@ const getWardDoctors=async(req,res)=>{
     const id_string = doc._id.toString();
     doctorDetails.push([doc.docID, doc.firstName, doc.lastName, id_string]);
   }
-  //console.log(doctorDetails)
   return res.status(200).json({"doctorDetails":doctorDetails});
 }
 
 
+//Get shift names of the ward
 const getShiftNames=async(req,res)=>{
   const month=req.query.month;
   const year=req.query.year;
@@ -387,7 +383,6 @@ const getShiftNames=async(req,res)=>{
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardID);
   const shiftNames_abstratct=await shifts.find({wardID:id},null,{limit:1});
-  //console.log(shiftNames_abstratct)
   var shiftNames=[]
   if(shiftNames_abstratct.length>0){
       shiftNames=shiftNames_abstratct[0].shifts;
@@ -395,6 +390,8 @@ const getShiftNames=async(req,res)=>{
 
   return res.status(200).json({"shiftNames":shiftNames});
 }
+
+
 
 const getShiftNamesForRoster=async(req,res)=>{
   const month=req.query.month;
@@ -445,6 +442,8 @@ const getShiftNamesForRoster=async(req,res)=>{
   return res.status(200).json({"shiftNames":finalShiftNames});
 }
 
+
+//get user details from the database
 const getUserDetails = async (req, res) => {
   const userId = req.body.userName;
   console.log('user id',userId);
@@ -481,10 +480,11 @@ const getUserDetails = async (req, res) => {
         wardName: wardDetails.wardName,
         wardID: wardDetails.wardNumber,
       });
-      // res.send(userDetails);
     }
   }
 };
+
+//function to update password 
 const changePassword = async (req, res) => {
   console.log(req.body);
   if (!req.body) {
@@ -542,7 +542,7 @@ const changePassword = async (req, res) => {
   }
 };
 
-
+//get ward name when id was given
 const getWardNamebyID=async(req,res)=>{
   const wardID=req.query.wardID;
   var mongoose = require('mongoose');
