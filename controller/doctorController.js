@@ -57,13 +57,14 @@ const putNotif = async (req, res, next) => {
   }
 };
 const getOutNotif = async (req, res) => {
+  //console.log("kasjhd")
   const docID = req.query.docID;
   const month = req.query.month;
   const year = req.query.year;
   const date = req.query.date;
   var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(docID);
-
+  //console.log(docID)
   const rec_notifications=await exchangeRequestModel.find({toID:id,requestState:1,month:month,year:year},null,{});
   const sending_recNot=[]
   for(const notif of rec_notifications){
@@ -85,7 +86,7 @@ const getOutNotif = async (req, res) => {
       }
     }
   }
-
+  console.log(sending_recNot)
   const accepted_notifications=await exchangeRequestModel.find({fromID:id,requestState:2,month:month,year:year},null,{});
   const sentNotifications=[];
   for(const notif of accepted_notifications){
