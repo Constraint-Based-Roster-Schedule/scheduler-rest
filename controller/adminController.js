@@ -59,7 +59,7 @@ const addUser = async (req,res)=>{
         new: true
       });
 
-      //console.log(doc) //TODO remove me
+      // console.log(doc) //TODO remove me
       var addUserRequestD=new Doctor(req.body);
       await addUserRequestD.save(function(err,addUserRequestD){
         if (err){
@@ -91,6 +91,7 @@ const addUser = async (req,res)=>{
          } else {
            console.log(info);
          }})
+         
 
         return res
           .status(200)
@@ -116,6 +117,29 @@ const addUser = async (req,res)=>{
         }
 
         console.log(addUserRequest._id+" added to the database")
+
+              let transporter = nodemailer.createTransport({
+             host: 'smtp.office365.com',
+             port: 587,
+             secure: false,  
+             auth: {
+                 user: "technestroster2022@outlook.com",
+                 pass: "happyHallibut03"
+             }
+        })
+        message = {
+         from: "technestroster2022@outlook.com",
+         to: req.body.emailaddress,
+         subject: "Registration for Roster Care",
+         text: `You have successfully registered for Roster Care. To log into the system, use ${pass} as the password`
+      }
+    transporter.sendMail(message, function(err, info) {
+         if (err) {
+           console.log(err)
+         } else {
+           console.log(info);
+         }})
+
         return res.status(200).json({success:true,msg:"User added to system successfully"})
       })
     }else{

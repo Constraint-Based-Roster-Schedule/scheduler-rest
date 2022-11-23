@@ -63,8 +63,11 @@ const getOutNotif = async (req, res) => {
   const date = req.query.date;
   var mongoose = require("mongoose");
   var id = mongoose.Types.ObjectId(docID);
-
+  console.log(month)
+  console.log(year)
+  console.log(docID)
   const rec_notifications=await exchangeRequestModel.find({toID:id,requestState:1,month:month,year:year},null,{});
+  console.log(rec_notifications)
   const sending_recNot=[]
   for(const notif of rec_notifications){
     //const int_requestDate=+notif.requestedDate;
@@ -181,12 +184,16 @@ const getData=async(req,res)=>{
   const wardID=req.query.wardID;
   const intID=req.query.intID;
   const wardId_string=wardID.toString();
-  //console.log(wardId_string)
+  console.log(month)
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardId_string);
   const wardRoster_abstract=await rosterSchema.find({month:month,year:year,wardID:id},null,{limit:1})
   //console.log(id);
-  const wardRoster=wardRoster_abstract[0].days;
+  const wardRoster=[]
+  if (wardRoster_abstract.length>0){
+    wardRoster=wardRoster_abstract[0].days;
+  }
+  console.log(wardRoster)
 
   let myShifts = [];
   for (const day of wardRoster) {
@@ -329,10 +336,6 @@ const getIndividualRoster = async (req, res) => {
     myShifts_abstract.push(myShifts_abstract3[0].days);
   }
 
-  //const myShifts=myShifts_abstract[0].days;
-  //console.log(myShifts_abstract);
-  // console.log(myShifts);
-  //console.log(shiftNames)
   return res
     .status(200)
     .json({ shiftNames: finalShiftNames, myShifts: myShifts_abstract });
@@ -361,9 +364,12 @@ const getShiftNames=async(req,res)=>{
   const wardID=req.query.wardID;
   var mongoose = require('mongoose');
   var id = mongoose.Types.ObjectId(wardID);
-  const shiftNames_abstratct=await shifts.find({month:month,year:year,wardID:id},null,{limit:1});
-  const shiftNames=shiftNames_abstratct[0].shifts;
-  //console.log(shiftNames);
+  const shiftNames_abstratct=await shifts.find({month:month,year:year},null,{limit:1});
+  let shiftNames=[]
+  if(shiftNames_abstratct.length>0){
+    shiftNames=shiftNames_abstratct[0].shifts;
+  }
+  
   return res.status(200).json({"shiftNames":shiftNames});
 }
 
